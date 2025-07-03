@@ -1,16 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Static Desktop</title>
+  <style>
+    body {
+      margin: 0;
+      background: url('https://wallpapercave.com/wp/wp2757874.jpg') center/cover no-repeat; /* Your desktop wallpaper */
+      font-family: sans-serif;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+    }
+    .taskbar span {
+      margin-right: 15px;
+      cursor: default;
+    }
+    .desktop-icon {
+      position: absolute;
+      top: 50px;
+      left: 50px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .desktop-icon img {
+      width: 64px;
+      height: 64px;
+      display: block;
+      margin: 0 auto;
+    }
+    .window {
+      position: absolute;
+      top: 150px;
+      left: 150px;
+      width: 400px;
+      height: 300px;
+      background: #222;
+      border: 2px solid #666;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.7);
+      display: none; /* Hidden by default */
+      flex-direction: column;
+    }
+    .window-header {
+      background: #444;
+      padding: 5px 10px;
+      cursor: move;
+    }
+    .window-content {
+      padding: 10px;
+      overflow: auto;
+    }
+    .close-button {
+      float: right;
+      color: #aaa;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop-icon" onclick="openWindow()">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Fairytale_book.png" alt="About Icon">
+    <div>About Me</div>
+  </div>
 
-<html>
-    <h1>
-        Hey, I'm Having Fun
-    </h1>
-    <body>
-        <h2>About me</h2>
-        <p>
-            I am a sleep addict who makes weird things.
-        </p>
-        <h2>What I'm working on</h2>
-        <p>
-            I'm obsessed with AI right now and I'm working on building a homelab.
-        </p>
-    </body>
+  <div class="window" id="aboutWindow">
+    <div class="window-header">
+      About Me
+      <span class="close-button" onclick="closeWindow()">X</span>
+    </div>
+    <div class="window-content">
+      <h1>Hey, I'm Having Fun</h1>
+      <h2>About me</h2>
+      <p>I am a sleep addict who makes weird things.</p>
+      <h2>What I'm working on</h2>
+      <p>I'm obsessed with AI right now and I'm working on building a homelab.</p>
+    </div>
+  </div>
+
+  <div class="taskbar">
+    <span>Start</span>
+    <span>My Static Desktop</span>
+  </div>
+
+  <script>
+    function openWindow() {
+      document.getElementById('aboutWindow').style.display = 'flex';
+    }
+    function closeWindow() {
+      document.getElementById('aboutWindow').style.display = 'none';
+    }
+  </script>
+</body>
 </html>
