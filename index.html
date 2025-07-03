@@ -1,59 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Mac-Style Web Desktop</title>
-  <!-- JS-DOS v6 for running Daggerfall in the browser -->
-  <script src="https://js-dos.com/6.22.1/js-dos.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Mac-Style Web Desktop (Dark)</title>
+  <!-- JS-DOS v6 -->
+  <script src="https://js-dos.com/6.22.1/js-dos.js" crossorigin="anonymous"></script>
   <style>
-    /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       width: 100%; height: 100%; overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background-image: url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg');
-      background-repeat: no-repeat; background-position: center center; background-size: cover;
+      background: #1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
+      color: #fff;
     }
-    /* Desktop icons */
-    #desktop { position: absolute; top: 22px; left: 0; right: 0; bottom: 48px; }
-    .desktop-icon { position: absolute; top: 40px; left: 20px; width: 60px; text-align: center;
-      cursor: pointer; user-select: none; }
-    .desktop-icon .icon-img { font-size: 32px; }
-    .desktop-icon .icon-label { font-size: 12px; margin-top: 4px; }
-
-    /* Menu bar */
-    #menubar { position: absolute; top: 0; left: 0; right: 0; height: 22px;
-      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+    #menubar {
+      position: absolute; top: 0; left: 0; right: 0; height: 22px;
+      background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
       display: flex; align-items: center; padding: 0 8px;
-      font-size: 12px; color: #000; z-index: 100;
+      font-size: 12px; z-index: 100;
     }
-    #menubar .menu-item { margin-right: 16px; cursor: default; }
-    #menubar .menu-spacer { flex: 1; }
+    .menu-item { margin-right: 16px; color: #fff; }
+    .menu-spacer { flex: 1; }
     #menubar-right { display: flex; align-items: center; gap: 8px; }
     #clock { font-family: monospace; }
-
-    /* Dock */
-    #dock { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      height: 48px; padding: 4px 8px; background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px); border-radius: 12px; display: flex;
-      align-items: center; z-index: 100;
+    #dock {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
+      padding: 4px 8px; border-radius: 12px; display: flex;
+      z-index: 100;
     }
-    .dock-icon { width: 32px; height: 32px; margin: 0 6px;
+    .dock-icon {
+      width: 32px; height: 32px; margin: 0 6px;
       font-size: 28px; line-height: 32px; text-align: center;
       cursor: pointer;
     }
-
-    /* App windows */
-    @keyframes disappear {
-      0% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(0.5); }
-    }
+    @keyframes disappear { to { opacity: 0; transform: scale(0.5); } }
     .minimizing { animation: disappear 0.5s ease forwards; cursor: wait; }
-
-    .window { position: absolute; width: 400px; height: 300px;
-      background: #fff; border: 1px solid #ccc; border-radius: 6px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    .window {
+      position: absolute; width: 400px; height: 300px;
+      background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
       display: flex; flex-direction: column; overflow: hidden;
       z-index: 200;
     }
@@ -61,33 +48,22 @@
       top: 22px !important; left: 0 !important;
       width: 100% !important; height: calc(100% - 70px) !important;
     }
-    .window-header { height: 24px; background: #f0f0f0;
+    .window-header {
+      height: 24px; background: #3a3a3c;
       display: flex; align-items: center; padding: 0 8px;
-      font-size: 12px; cursor: move;
+      cursor: move;
     }
     .buttons { display: flex; gap: 6px; margin-right: 8px; }
-    .buttons div {
-      width: 12px; height: 12px; border-radius: 50%; background: red;
-      cursor: pointer;
-    }
-    .buttons div:nth-child(2) { background: #ffbf00; }
-    .buttons div:nth-child(3) { background: #28c940; }
-    .window-title { flex: 1; text-align: center; }
-    .window-content { flex: 1; position: relative; }
+    .buttons div { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+    .buttons div:nth-child(1) { background: #ff5f56; }
+    .buttons div:nth-child(2) { background: #ffbd2e; }
+    .buttons div:nth-child(3) { background: #27c93f; }
+    .window-title { flex: 1; text-align: center; color: #fff; font-size: 12px; }
+    .window-content { flex: 1; position: relative; overflow: auto; }
     .dos-container { width: 100%; height: 100%; }
   </style>
 </head>
 <body>
-  <!-- Desktop icons -->
-  <div id="desktop">
-    <div class="desktop-icon" id="filesIcon" onmousedown="startIconDrag(event, this)" ondblclick="openWindow('Files','<h2>Finder</h2><p>Your files go here.</p>')">
-      <div class="icon-img">📁</div>
-      <div class="icon-label">Files</div>
-    </div>
-    <!-- Additional desktop apps can be added here -->
-  </div>
-
-  <!-- Menu bar -->
   <div id="menubar">
     <div class="menu-item"> MyWebOS</div>
     <div class="menu-item">File</div>
@@ -99,159 +75,63 @@
       <div id="volumeIcon">🔊</div>
     </div>
   </div>
-
-  <!-- Dock -->
   <div id="dock">
-    <div class="dock-icon" id="finderIcon">📁</div>
-    <div class="dock-icon" id="browserIcon">🌐</div>
-    <div class="dock-icon" id="daggerIcon">🗡️</div>
+    <div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
+    <div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
+    <div class="dock-icon" id="finderIcon" title="Finder">📁</div>
   </div>
-
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if (typeof Dos === 'undefined') {
-        console.error('js-dos failed to load.');
-        alert('Emulator failed to load.');
-        return;
+    // Clock
+    const clockEl = document.getElementById('clock');
+    function updateClock() { clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); }
+    updateClock(); setInterval(updateClock, 60000);
+
+    // Drag helpers
+    let zIndex = 200;
+    function startDrag(e, win) {
+      const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
+      function onDrag(e) { win.style.left = (e.clientX - ox) + 'px'; win.style.top = (e.clientY - oy) + 'px'; win.style.zIndex = ++zIndex; }
+      function onUp() { document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', onUp); }
+      document.addEventListener('mousemove', onDrag);
+      document.addEventListener('mouseup', onUp);
+    }
+
+    // Window creator
+    let winCount = 0;
+    function openWindow(title, contentHTML) {
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.style.top = (50 + winCount * 20) + 'px';
+      win.style.left = (50 + winCount * 20) + 'px';
+      win.style.zIndex = ++zIndex;
+      win.dataset.max = '0';
+      win.innerHTML = `
+        <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
+          <div class="buttons"><div></div><div></div><div></div></div>
+          <div class="window-title">${title}</div>
+        </div>
+        <div class="window-content">${contentHTML}</div>
+      `;
+      document.body.appendChild(win);
+      const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
+      btnClose.onclick = () => win.remove();
+      btnMin.onclick = () => { win.classList.add('minimizing'); win.addEventListener('animationend', () => { win.style.display='none'; win.classList.remove('minimizing'); }, { once:true }); };
+      btnMax.onclick = () => win.dataset.max = win.dataset.max === '1' ? '0' : '1';
+      winCount++;
+      return win;
+    }
+
+    // Dock actions
+    document.getElementById('finderIcon').addEventListener('click', () => openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>'));
+    document.getElementById('browserIcon').addEventListener('click', () => openWindow('Browser', '<iframe src="https://www.apple.com" style="width:100%;height:100%;border:none;"></iframe>'));
+    document.getElementById('daggerIcon').addEventListener('click', () => {
+      const win = openWindow('Daggerfall', `<div class='dos-container' id='dos-${winCount}'></div>`);
+      const dosEl = win.querySelector('.dos-container');
+      if (window.Dos) {
+        Dos(dosEl, { wdosboxUrl:'https://js-dos.com/6.22.1/wdosbox.js' })
+          .then(dos => dos.run('https://archive.org/download/msdos_Elder_Scrolls_The_-_Daggerfall_1996/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip'))
+          .catch(() => alert('Error launching Daggerfall.'));
       }
-
-      let zIndex = 200;
-      let windowCount = 0;
-      let iconDragged, iconOffsetX, iconOffsetY;
-
-      // Update clock every minute
-      function updateClock() {
-        const now = new Date();
-        document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      }
-      updateClock();
-      setInterval(updateClock, 60000);
-
-      // Core window functions
-      function openWindow(title, contentHtml) {
-        windowCount++;
-        const win = document.createElement('div');
-        win.className = 'window';
-        win.style.top = `${50 + windowCount * 20}px`;
-        win.style.left = `${50 + windowCount * 20}px`;
-        win.style.zIndex = zIndex++;
-        win.dataset.max = '0';
-        win.innerHTML = `
-          <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
-            <div class="buttons"><div></div><div></div><div></div></div>
-            <div class="window-title">${title}</div>
-          </div>
-          <div class="window-content">${contentHtml}</div>
-        `;
-        document.body.appendChild(win);
-        const btns = win.querySelectorAll('.buttons div');
-        // Close
-        btns[0].onclick = () => win.remove();
-        // Minimize with hourglass disappear effect
-        btns[1].onclick = () => {
-          win.classList.add('minimizing');
-          win.addEventListener('animationend', () => {
-            win.style.display = 'none';
-            win.classList.remove('minimizing');
-          }, { once: true });
-        };
-        // Maximize
-        btns[2].onclick = () => { win.dataset.max = (win.dataset.max === '1' ? '0' : '1'); };
-      }
-
-      function toggleMax(win) {
-        win.dataset.max = win.dataset.max === '1' ? '0' : '1';
-      }
-
-      function openDaggerfall() {
-        windowCount++;
-        const id = `dos-${windowCount}`;
-        const win = document.createElement('div');
-        win.className = 'window';
-        win.style.top = `${50 + windowCount * 20}px`;
-        win.style.left = `${50 + windowCount * 20}px`;
-        win.style.zIndex = zIndex++;
-        win.dataset.max = '0';
-        win.innerHTML = `
-          <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
-            <div class="buttons"><div></div><div></div><div></div></div>
-            <div class="window-title">Daggerfall</div>
-          </div>
-          <div class="window-content">
-            <div class="dos-container" id="${id}"></div>
-          </div>
-        `;
-        document.body.appendChild(win);
-        const btns = win.querySelectorAll('.buttons div');
-        btns[0].onclick = () => win.remove();
-        btns[1].onclick = () => {
-          win.classList.add('minimizing');
-          win.addEventListener('animationend', () => {
-            win.style.display = 'none';
-            win.classList.remove('minimizing');
-          }, { once: true });
-        };
-        btns[2].onclick = () => toggleMax(win);
-
-        Dos(document.getElementById(id), {
-          wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js'
-        }).then(dos => {
-          dos.run(
-            'https://archive.org/download/msdos_Elder_Scrolls_The_-_Daggerfall_1996/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip'
-          );
-        }).catch(err => {
-          console.error('Failed to start Daggerfall:', err);
-          alert('Error launching game.');
-        });
-      }
-
-      // Attach event listeners to dock icons
-      document.getElementById('finderIcon').addEventListener('click', () => openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>'));
-      document.getElementById('browserIcon').addEventListener('click', () => openWindow('Browser', '<h2>Safari</h2><p>Yet to be implemented.</p>'));
-      document.getElementById('daggerIcon').addEventListener('click', openDaggerfall);
-
-      // Drag handling for windows
-      let offsetX, offsetY, draggedWin;
-      window.startDrag = function(e, win) {
-        draggedWin = win;
-        offsetX = e.clientX - win.offsetLeft;
-        offsetY = e.clientY - win.offsetTop;
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', stopDrag);
-      };
-      function drag(e) {
-        if (draggedWin) {
-          draggedWin.style.left = `${e.clientX - offsetX}px`;
-          draggedWin.style.top = `${e.clientY - offsetY}px`;
-          draggedWin.style.zIndex = zIndex++;
-        }
-      }
-      function stopDrag() {
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('mouseup', stopDrag);
-        draggedWin = null;
-      }
-
-      // Drag handling for desktop icons
-      window.startIconDrag = function(e, icon) {
-        iconDragged = icon;
-        iconOffsetX = e.clientX - icon.offsetLeft;
-        iconOffsetY = e.clientY - icon.offsetTop;
-        document.addEventListener('mousemove', dragIcon);
-        document.addEventListener('mouseup', stopIconDrag);
-      };
-      function dragIcon(e) {
-        if (iconDragged) {
-          iconDragged.style.left = `${e.clientX - iconOffsetX}px`;
-          iconDragged.style.top = `${e.clientY - iconOffsetY}px`;
-        }
-      }
-      function stopIconDrag() {
-        document.removeEventListener('mousemove', dragIcon);
-        document.removeEventListener('mouseup', stopIconDrag);
-        iconDragged = null;
-      }
-
     });
   </script>
 </body>
