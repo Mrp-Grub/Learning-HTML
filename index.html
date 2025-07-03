@@ -3,104 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Static Desktop</title>
+  <title>Hey, I'm Having Fun</title>
   <style>
+    :root {
+      --bg-color: #0f2027;
+      --text-color: #eee;
+      --accent-color: #00d1b2;
+    }
     body {
       margin: 0;
-      background: url('https://wallpapercave.com/wp/wp2757874.jpg') center/cover no-repeat; /* Your desktop wallpaper */
-      font-family: sans-serif;
-      color: #fff;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
-    }
-    .taskbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: rgba(0,0,0,0.7);
+      font-family: system-ui, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
       display: flex;
-      align-items: center;
-      padding: 0 10px;
-    }
-    .taskbar span {
-      margin-right: 15px;
-      cursor: default;
-    }
-    .desktop-icon {
-      position: absolute;
-      top: 50px;
-      left: 50px;
-      text-align: center;
-      cursor: pointer;
-    }
-    .desktop-icon img {
-      width: 64px;
-      height: 64px;
-      display: block;
-      margin: 0 auto;
-    }
-    .window {
-      position: absolute;
-      top: 150px;
-      left: 150px;
-      width: 400px;
-      height: 300px;
-      background: #222;
-      border: 2px solid #666;
-      box-shadow: 5px 5px 15px rgba(0,0,0,0.7);
-      display: none; /* Hidden by default */
       flex-direction: column;
+      scroll-behavior: smooth;
+      transition: background 0.3s, color 0.3s;
     }
-    .window-header {
-      background: #444;
-      padding: 5px 10px;
-      cursor: move;
+    header {
+      padding: 80px 20px 40px;
+      text-align: center;
     }
-    .window-content {
-      padding: 10px;
-      overflow: auto;
+    header h1 {
+      font-size: 3em;
+      margin: 0 0 0.3em;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 1s forwards;
     }
-    .close-button {
-      float: right;
-      color: #aaa;
+    header p {
+      font-size: 1.2em;
+      color: var(--accent-color);
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.3s;
+    }
+    section {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    section h2 {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+      color: var(--accent-color);
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    section p {
+      line-height: 1.6;
+      font-size: 1.1em;
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .toggle-theme {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent-color);
+      color: #000;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 1.2em;
       cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .toggle-theme:hover {
+      transform: scale(1.1);
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeInSection {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="desktop-icon" onclick="openWindow()">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Fairytale_book.png" alt="About Icon">
-    <div>About Me</div>
-  </div>
+  <header>
+    <h1 id="typing"></h1>
+    <p>Welcome to my personal corner of the internet.</p>
+  </header>
 
-  <div class="window" id="aboutWindow">
-    <div class="window-header">
-      About Me
-      <span class="close-button" onclick="closeWindow()">X</span>
-    </div>
-    <div class="window-content">
-      <h1>Hey, I'm Having Fun</h1>
-      <h2>About me</h2>
-      <p>I am a sleep addict who makes weird things.</p>
-      <h2>What I'm working on</h2>
-      <p>I'm obsessed with AI right now and I'm working on building a homelab.</p>
-    </div>
-  </div>
+  <section>
+    <h2>About Me</h2>
+    <p>I am a sleep addict who makes weird things. I love exploring technology and finding creative ways to build new ideas.</p>
+  </section>
 
-  <div class="taskbar">
-    <span>Start</span>
-    <span>My Static Desktop</span>
-  </div>
+  <section>
+    <h2>What I'm Working On</h2>
+    <p>I'm obsessed with AI right now and I'm working on building a homelab to experiment with cutting-edge projects.</p>
+  </section>
+
+  <footer>
+    &copy; 2025 Your Name &bull; Built with ❤️
+  </footer>
+
+  <button class="toggle-theme" onclick="toggleTheme()">🌓</button>
 
   <script>
-    function openWindow() {
-      document.getElementById('aboutWindow').style.display = 'flex';
+    // Simple typing animation
+    const text = "Hey, I'm Having Fun";
+    const typingElem = document.getElementById("typing");
+    let index = 0;
+    function type() {
+      typingElem.textContent += text[index];
+      index++;
+      if (index < text.length) {
+        setTimeout(type, 100);
+      }
     }
-    function closeWindow() {
-      document.getElementById('aboutWindow').style.display = 'none';
+    type();
+
+    // Fade-in sections when they enter viewport
+    const sections = document.querySelectorAll("section h2, section p");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animation = "fadeInSection 1s forwards";
+        }
+      });
+    }, { threshold: 0.1 });
+    sections.forEach(el => observer.observe(el));
+
+    // Dark/light mode toggle
+    let dark = true;
+    function toggleTheme() {
+      dark = !dark;
+      document.documentElement.style.setProperty("--bg-color", dark ? "#0f2027" : "#f4f4f4");
+      document.documentElement.style.setProperty("--text-color", dark ? "#eee" : "#111");
+      document.documentElement.style.setProperty("--accent-color", dark ? "#00d1b2" : "#ff4081");
     }
   </script>
 </body>
