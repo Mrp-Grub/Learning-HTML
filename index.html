@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Mac-Style Web Desktop</title>
-  <!-- JS-DOS for running Doom in the browser -->
+  <title>My Mac‑Style Web Desktop</title>
+  <!-- JS‑DOS for running Doom in the browser -->
   <script src="https://js-dos.com/7.4.0/js-dos.min.js"></script>
   <style>
     /* Reset */
@@ -13,45 +13,93 @@
 
     /* Wallpaper */
     #desktop {
-      position: absolute; top: 22px; bottom: 48px; left: 0; right: 0;
-      background: url('penguins.jpg') no-repeat center center / cover;
+      position: absolute;
+      top: 22px;
+      bottom: 48px;
+      left: 0;
+      right: 0;
+      background-color: #000;
+      background: url('https://wallpapercave.com/wp/wp2757874.jpg') no-repeat center center / cover;
+      z-index: 1;
     }
 
     /* Top menu bar (macOS style) */
     #menubar {
-      position: absolute; top: 0; left: 0; right: 0; height: 22px;
-      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-      display: flex; align-items: center; padding: 0 8px;
-      font-size: 12px; color: #000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 22px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      font-size: 12px;
+      color: #000;
+      z-index: 100;
     }
     #menubar .menu-item { margin-right: 16px; cursor: default; }
 
     /* Dock (macOS style) */
     #dock {
-      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      height: 48px; padding: 4px 8px; background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px); border-radius: 12px;
-      display: flex; align-items: flex-end;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 48px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-end;
+      z-index: 100;
     }
-    #dock .dock-icon { width: 32px; margin: 0 6px; cursor: pointer; }
-    #dock .dock-icon img { width: 100%; display: block; }
+    #dock .dock-icon {
+      width: 32px;
+      height: 32px;
+      margin: 0 6px;
+      cursor: pointer;
+    }
+    #dock .dock-icon img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
 
     /* Window styles */
     .window {
-      position: absolute; width: 400px; height: 300px;
-      background: #fff; border: 1px solid #ccc; border-radius: 6px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: flex; flex-direction: column;
-      overflow: hidden; z-index: 1;
+      position: absolute;
+      width: 400px;
+      height: 300px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 2;
     }
     .window-header {
-      height: 24px; background: #f0f0f0; display: flex; align-items: center;
-      padding: 0 8px; font-size: 12px; cursor: move;
+      height: 24px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      font-size: 12px;
+      cursor: move;
     }
     .window-header .buttons {
-      display: flex; gap: 6px; margin-right: 8px;
+      display: flex;
+      gap: 6px;
+      margin-right: 8px;
     }
     .window-header .buttons div {
-      width: 12px; height: 12px; border-radius: 50%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
       background: red;
     }
     .window-header .buttons div:nth-child(2) { background: #ffbf00; }
@@ -130,12 +178,10 @@
         </div>`;
       document.body.appendChild(win);
 
-      // Initialize JS-DOS in the new container
       jsDos.createInstance({
         id: `dos-${windowCount}`,
         wdosboxUrl: 'https://js-dos.com/7.4.0/wdosbox.js'
       }).ready.then(dos => {
-        // Replace this URL with your hosted DOOM WAD
         dos.run('https://js-dos.com/cdn/6.22.1/games/doom/doom1.wad');
       });
     }
