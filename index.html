@@ -1,154 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hey, I'm Having Fun</title>
-  <style>
-    :root {
-      --bg-color: #0f2027;
-      --text-color: #eee;
-      --accent-color: #00d1b2;
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      scroll-behavior: smooth;
-      transition: background 0.3s, color 0.3s;
-    }
-    header {
-      padding: 80px 20px 40px;
-      text-align: center;
-    }
-    header h1 {
-      font-size: 3em;
-      margin: 0 0 0.3em;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 1s forwards;
-    }
-    header p {
-      font-size: 1.2em;
-      color: var(--accent-color);
-      opacity: 0;
-      animation: fadeIn 1s forwards 0.3s;
-    }
-    section {
-      max-width: 800px;
-      margin: 60px auto;
-      padding: 0 20px;
-    }
-    section h2 {
-      font-size: 2em;
-      margin-bottom: 0.5em;
-      color: var(--accent-color);
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    section p {
-      line-height: 1.6;
-      font-size: 1.1em;
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    footer {
-      margin-top: auto;
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9em;
-      background: rgba(0, 0, 0, 0.2);
-    }
-    .toggle-theme {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--accent-color);
-      color: #000;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-    .toggle-theme:hover {
-      transform: scale(1.1);
-    }
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    @keyframes fadeInSection {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Web Desktop OS</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: sans-serif;
+    user-select: none;
+  }
+  #desktop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url('https://wallpapercave.com/wp/wp2757874.jpg') center/cover no-repeat;
+  }
+  .icon {
+    width: 80px;
+    text-align: center;
+    color: white;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+  }
+  .icon img {
+    width: 64px;
+    height: 64px;
+  }
+  .window {
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    background: #222;
+    border: 2px solid #666;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+  }
+  .window-header {
+    background: #444;
+    padding: 5px 10px;
+    color: #fff;
+    cursor: move;
+  }
+  .window-content {
+    flex-grow: 1;
+    background: #333;
+    color: #eee;
+    padding: 10px;
+    overflow: auto;
+  }
+  .close-button {
+    float: right;
+    color: #aaa;
+    cursor: pointer;
+  }
+  #taskbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1 id="typing"></h1>
-    <p>Welcome to my personal corner of the internet.</p>
-  </header>
+  <div id="desktop">
+    <div class="icon" onclick="openWindow('About Me', '<h2>About Me</h2><p>I am a sleep addict who makes weird things.</p>')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Fairytale_book.png" alt="About Icon">
+      <div>About Me</div>
+    </div>
+    <div class="icon" style="top: 120px;" onclick="openWindow('Projects', '<h2>Projects</h2><p>I\'m working on AI and my homelab.</p>')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Fedora_icon.png" alt="Projects Icon">
+      <div>Projects</div>
+    </div>
+    <div id="taskbar">
+      <span>Start</span>
+    </div>
+  </div>
 
-  <section>
-    <h2>About Me</h2>
-    <p>I am a sleep addict who makes weird things. I love exploring technology and finding creative ways to build new ideas.</p>
-  </section>
+<script>
+let zIndex = 2;
 
-  <section>
-    <h2>What I'm Working On</h2>
-    <p>I'm obsessed with AI right now and I'm working on building a homelab to experiment with cutting-edge projects.</p>
-  </section>
+function openWindow(title, content) {
+  const win = document.createElement('div');
+  win.className = 'window';
+  win.style.top = '100px';
+  win.style.left = '100px';
+  win.style.zIndex = zIndex++;
+  win.innerHTML = `
+    <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
+      ${title}
+      <span class="close-button" onclick="this.parentElement.parentElement.remove()">X</span>
+    </div>
+    <div class="window-content">${content}</div>
+  `;
+  document.getElementById('desktop').appendChild(win);
+}
 
-  <footer>
-    &copy; 2025 Your Name &bull; Built with ❤️
-  </footer>
+let offsetX, offsetY, draggedWin;
 
-  <button class="toggle-theme" onclick="toggleTheme()">🌓</button>
+function startDrag(e, win) {
+  draggedWin = win;
+  offsetX = e.clientX - win.offsetLeft;
+  offsetY = e.clientY - win.offsetTop;
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', stopDrag);
+}
 
-  <script>
-    // Simple typing animation
-    const text = "Hey, I'm Having Fun";
-    const typingElem = document.getElementById("typing");
-    let index = 0;
-    function type() {
-      typingElem.textContent += text[index];
-      index++;
-      if (index < text.length) {
-        setTimeout(type, 100);
-      }
-    }
-    type();
+function drag(e) {
+  if (draggedWin) {
+    draggedWin.style.left = (e.clientX - offsetX) + 'px';
+    draggedWin.style.top = (e.clientY - offsetY) + 'px';
+    draggedWin.style.zIndex = zIndex++;
+  }
+}
 
-    // Fade-in sections when they enter viewport
-    const sections = document.querySelectorAll("section h2, section p");
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.animation = "fadeInSection 1s forwards";
-        }
-      });
-    }, { threshold: 0.1 });
-    sections.forEach(el => observer.observe(el));
-
-    // Dark/light mode toggle
-    let dark = true;
-    function toggleTheme() {
-      dark = !dark;
-      document.documentElement.style.setProperty("--bg-color", dark ? "#0f2027" : "#f4f4f4");
-      document.documentElement.style.setProperty("--text-color", dark ? "#eee" : "#111");
-      document.documentElement.style.setProperty("--accent-color", dark ? "#00d1b2" : "#ff4081");
-    }
-  </script>
+function stopDrag() {
+  document.removeEventListener('mousemove', drag);
+  document.removeEventListener('mouseup', stopDrag);
+  draggedWin = null;
+}
+</script>
 </body>
 </html>
