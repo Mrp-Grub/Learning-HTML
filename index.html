@@ -1,141 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>My Web Desktop OS</title>
-<style>
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    font-family: sans-serif;
-    user-select: none;
-  }
-  #desktop {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    /* fixed background shorthand */
-    background: url('https://wallpapercave.com/wp/wp2757874.jpg') no-repeat center center / cover;
-  }
-  .icon {
-    width: 80px;
-    text-align: center;
-    color: white;
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    cursor: pointer;
-    background: rgba(0,0,0,0.3);
-    border-radius: 4px;
-    padding: 4px;
-  }
-  .icon img {
-    width: 64px;
-    height: 64px;
-  }
-  .window {
-    position: absolute;
-    width: 300px;
-    height: 200px;
-    background: #222;
-    border: 2px solid #666;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.7);
-    display: flex;
-    flex-direction: column;
-    z-index: 1;
-  }
-  .window-header {
-    background: #444;
-    padding: 5px 10px;
-    color: #fff;
-    cursor: move;
-  }
-  .window-content {
-    flex-grow: 1;
-    background: #333;
-    color: #eee;
-    padding: 10px;
-    overflow: auto;
-  }
-  .close-button {
-    float: right;
-    color: #aaa;
-    cursor: pointer;
-  }
-  #taskbar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 40px;
-    width: 100%;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Mac-Style Web Desktop</title>
+  <!-- JS-DOS for running Doom in the browser -->
+  <script src="https://js-dos.com/7.4.0/js-dos.min.js"></script>
+  <style>
+    /* Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    /* Wallpaper */
+    #desktop {
+      position: absolute; top: 22px; bottom: 48px; left: 0; right: 0;
+      background: url('penguins.jpg') no-repeat center center / cover;
+    }
+
+    /* Top menu bar (macOS style) */
+    #menubar {
+      position: absolute; top: 0; left: 0; right: 0; height: 22px;
+      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+      display: flex; align-items: center; padding: 0 8px;
+      font-size: 12px; color: #000;
+    }
+    #menubar .menu-item { margin-right: 16px; cursor: default; }
+
+    /* Dock (macOS style) */
+    #dock {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      height: 48px; padding: 4px 8px; background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px); border-radius: 12px;
+      display: flex; align-items: flex-end;
+    }
+    #dock .dock-icon { width: 32px; margin: 0 6px; cursor: pointer; }
+    #dock .dock-icon img { width: 100%; display: block; }
+
+    /* Window styles */
+    .window {
+      position: absolute; width: 400px; height: 300px;
+      background: #fff; border: 1px solid #ccc; border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: flex; flex-direction: column;
+      overflow: hidden; z-index: 1;
+    }
+    .window-header {
+      height: 24px; background: #f0f0f0; display: flex; align-items: center;
+      padding: 0 8px; font-size: 12px; cursor: move;
+    }
+    .window-header .buttons {
+      display: flex; gap: 6px; margin-right: 8px;
+    }
+    .window-header .buttons div {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: red;
+    }
+    .window-header .buttons div:nth-child(2) { background: #ffbf00; }
+    .window-header .buttons div:nth-child(3) { background: #28c940; }
+    .window-title { flex: 1; text-align: center; }
+    .window-content { flex: 1; background: #fff; position: relative; }
+
+    /* DOS container fullscreen inside window-content */
+    .dos-container { width: 100%; height: 100%; }
+  </style>
 </head>
 <body>
-  <div id="desktop">
-    <div class="icon" onclick="openWindow('About Me', '<h2>About Me</h2><p>I am a sleep addict who makes weird things.</p>')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Fairytale_book.png" alt="About Icon">
-      <div>About Me</div>
+  <!-- Top menubar -->
+  <div id="menubar">
+    <div class="menu-item"> MyWebOS</div>
+    <div class="menu-item">File</div>
+    <div class="menu-item">Edit</div>
+    <div class="menu-item">View</div>
+  </div>
+
+  <!-- Desktop area with wallpaper -->
+  <div id="desktop"></div>
+
+  <!-- Dock with icons -->
+  <div id="dock">
+    <div class="dock-icon" onclick="openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Mac_Finder_icon.png" alt="Finder">
     </div>
-    <div class="icon" style="top: 120px;" onclick="openWindow('Projects', '<h2>Projects</h2><p>I\'m working on AI and my homelab.</p>')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Fedora_icon.png" alt="Projects Icon">
-      <div>Projects</div>
+    <div class="dock-icon" onclick="openWindow('Browser', '<h2>Safari</h2><p>Yet to be implemented.</p>')">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Safari_icon.png" alt="Browser">
     </div>
-    <div id="taskbar">
-      <span>Start</span>
+    <div class="dock-icon" onclick="openDoom()">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Doom_icon.svg" alt="Doom">
     </div>
   </div>
 
-<script>
-let zIndex = 2;
+  <script>
+    let zIndex = 2;
+    let windowCount = 0;
 
-function openWindow(title, content) {
-  const win = document.createElement('div');
-  win.className = 'window';
-  win.style.top = '100px';
-  win.style.left = '100px';
-  win.style.zIndex = zIndex++;
-  win.innerHTML = `
-    <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
-      ${title}
-      <span class="close-button" onclick="this.parentElement.parentElement.remove()">X</span>
-    </div>
-    <div class="window-content">${content}</div>
-  `;
-  document.getElementById('desktop').appendChild(win);
-}
+    function openWindow(title, content) {
+      windowCount++;
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.style.top = (50 + windowCount*20) + 'px';
+      win.style.left = (50 + windowCount*20) + 'px';
+      win.style.zIndex = zIndex++;
+      win.innerHTML = `
+        <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
+          <div class="buttons">
+            <div></div><div></div><div></div>
+          </div>
+          <div class="window-title">${title}</div>
+        </div>
+        <div class="window-content">${content}</div>
+      `;
+      document.body.appendChild(win);
+    }
 
-let offsetX, offsetY, draggedWin;
+    function openDoom() {
+      windowCount++;
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.style.top = (50 + windowCount*20) + 'px';
+      win.style.left = (50 + windowCount*20) + 'px';
+      win.style.zIndex = zIndex++;
+      win.innerHTML = `
+        <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
+          <div class="buttons">
+            <div></div><div></div><div></div>
+          </div>
+          <div class="window-title">Doom</div>
+        </div>
+        <div class="window-content">
+          <div class="dos-container" id="dos-${windowCount}"></div>
+        </div>`;
+      document.body.appendChild(win);
 
-function startDrag(e, win) {
-  draggedWin = win;
-  offsetX = e.clientX - win.offsetLeft;
-  offsetY = e.clientY - win.offsetTop;
-  document.addEventListener('mousemove', drag);
-  document.addEventListener('mouseup', stopDrag);
-}
+      // Initialize JS-DOS in the new container
+      jsDos.createInstance({
+        id: `dos-${windowCount}`,
+        wdosboxUrl: 'https://js-dos.com/7.4.0/wdosbox.js'
+      }).ready.then(dos => {
+        // Replace this URL with your hosted DOOM WAD
+        dos.run('https://js-dos.com/cdn/6.22.1/games/doom/doom1.wad');
+      });
+    }
 
-function drag(e) {
-  if (draggedWin) {
-    draggedWin.style.left = (e.clientX - offsetX) + 'px';
-    draggedWin.style.top = (e.clientY - offsetY) + 'px';
-    draggedWin.style.zIndex = zIndex++;
-  }
-}
-
-function stopDrag() {
-  document.removeEventListener('mousemove', drag);
-  document.removeEventListener('mouseup', stopDrag);
-  draggedWin = null;
-}
-</script>
+    // Drag & drop handlers
+    let offsetX, offsetY, draggedWin;
+    function startDrag(e, win) {
+      draggedWin = win;
+      offsetX = e.clientX - win.offsetLeft;
+      offsetY = e.clientY - win.offsetTop;
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', stopDrag);
+    }
+    function drag(e) {
+      if (draggedWin) {
+        draggedWin.style.left = (e.clientX - offsetX) + 'px';
+        draggedWin.style.top = (e.clientY - offsetY) + 'px';
+        draggedWin.style.zIndex = zIndex++;
+      }
+    }
+    function stopDrag() {
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', stopDrag);
+      draggedWin = null;
+    }
+  </script>
 </body>
 </html>
