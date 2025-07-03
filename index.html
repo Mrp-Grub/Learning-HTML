@@ -5,30 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Mac‑Style Web Desktop</title>
   <!-- JS‑DOS for running Doom in the browser -->
-  <script src="https://js-dos.com/7.4.0/js-dos.min.js"></script>
+  <script src="https://js-dos.com/6.22.1/js-dos.js"></script>
   <style>
-    /* Reset */
+    /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-
-    /* Wallpaper */
-    #desktop {
-      position: absolute;
-      top: 22px;
-      bottom: 48px;
-      left: 0;
-      right: 0;
-      background-color: #000;
-      background: url('https://wallpapercave.com/wp/wp2757874.jpg') no-repeat center center / cover;
-      z-index: 1;
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      /* Penguin wallpaper */
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/71/Emperor_Penguin_Manchot_empereur.jpg');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
     }
 
-    /* Top menu bar (macOS style) */
+    /* Top menu bar */
     #menubar {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 22px;
       background: rgba(255,255,255,0.8);
       backdrop-filter: blur(10px);
@@ -41,7 +37,7 @@
     }
     #menubar .menu-item { margin-right: 16px; cursor: default; }
 
-    /* Dock (macOS style) */
+    /* Dock */
     #dock {
       position: absolute;
       bottom: 0;
@@ -53,22 +49,20 @@
       backdrop-filter: blur(10px);
       border-radius: 12px;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       z-index: 100;
     }
-    #dock .dock-icon {
+    .dock-icon {
       width: 32px;
       height: 32px;
       margin: 0 6px;
+      font-size: 28px;
+      line-height: 32px;
+      text-align: center;
       cursor: pointer;
     }
-    #dock .dock-icon img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
 
-    /* Window styles */
+    /* App windows */
     .window {
       position: absolute;
       width: 400px;
@@ -80,7 +74,13 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      z-index: 2;
+      z-index: 200;
+    }
+    .window[data-max="1"] {
+      top: 22px !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: calc(100% - 70px) !important;
     }
     .window-header {
       height: 24px;
@@ -91,28 +91,27 @@
       font-size: 12px;
       cursor: move;
     }
-    .window-header .buttons {
+    .buttons {
       display: flex;
       gap: 6px;
       margin-right: 8px;
     }
-    .window-header .buttons div {
+    .buttons div {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       background: red;
+      cursor: pointer;
     }
-    .window-header .buttons div:nth-child(2) { background: #ffbf00; }
-    .window-header .buttons div:nth-child(3) { background: #28c940; }
+    .buttons div:nth-child(2) { background: #ffbf00; }
+    .buttons div:nth-child(3) { background: #28c940; }
     .window-title { flex: 1; text-align: center; }
     .window-content { flex: 1; background: #fff; position: relative; }
-
-    /* DOS container fullscreen inside window-content */
     .dos-container { width: 100%; height: 100%; }
   </style>
 </head>
 <body>
-  <!-- Top menubar -->
+  <!-- Menu bar -->
   <div id="menubar">
     <div class="menu-item"> MyWebOS</div>
     <div class="menu-item">File</div>
@@ -120,73 +119,71 @@
     <div class="menu-item">View</div>
   </div>
 
-  <!-- Desktop area with wallpaper -->
-  <div id="desktop"></div>
-
-  <!-- Dock with icons -->
+  <!-- Dock -->
   <div id="dock">
-    <div class="dock-icon" onclick="openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Mac_Finder_icon.png" alt="Finder">
-    </div>
-    <div class="dock-icon" onclick="openWindow('Browser', '<h2>Safari</h2><p>Yet to be implemented.</p>')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Safari_icon.png" alt="Browser">
-    </div>
-    <div class="dock-icon" onclick="openDoom()">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Doom_icon.svg" alt="Doom">
-    </div>
+    <div class="dock-icon" onclick="openWindow('Finder','<h2>Finder</h2><p>Your files go here.</p>')">📁</div>
+    <div class="dock-icon" onclick="openWindow('Browser','<h2>Safari</h2><p>Yet to be implemented.</p>')">🌐</div>
+    <div class="dock-icon" onclick="openDoom()">🔫</div>
   </div>
 
   <script>
-    let zIndex = 2;
-    let windowCount = 0;
+    let zIndex = 200, windowCount = 0;
 
-    function openWindow(title, content) {
+    function openWindow(title, contentHtml) {
       windowCount++;
       const win = document.createElement('div');
       win.className = 'window';
-      win.style.top = (50 + windowCount*20) + 'px';
-      win.style.left = (50 + windowCount*20) + 'px';
+      win.style.top = `${50 + windowCount * 20}px`;
+      win.style.left = `${50 + windowCount * 20}px`;
       win.style.zIndex = zIndex++;
+      win.dataset.max = '0';
       win.innerHTML = `
         <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
-          <div class="buttons">
-            <div></div><div></div><div></div>
-          </div>
+          <div class="buttons"><div></div><div></div><div></div></div>
           <div class="window-title">${title}</div>
         </div>
-        <div class="window-content">${content}</div>
+        <div class="window-content">${contentHtml}</div>
       `;
       document.body.appendChild(win);
+
+      const btns = win.querySelectorAll('.buttons div');
+      btns[0].onclick = () => win.remove();
+      btns[1].onclick = () => win.style.display = 'none';
+      btns[2].onclick = () => toggleMax(win);
+    }
+
+    function toggleMax(win) {
+      win.dataset.max = win.dataset.max === '1' ? '0' : '1';
     }
 
     function openDoom() {
       windowCount++;
+      const id = `dos-${windowCount}`;
       const win = document.createElement('div');
       win.className = 'window';
-      win.style.top = (50 + windowCount*20) + 'px';
-      win.style.left = (50 + windowCount*20) + 'px';
+      win.style.top = `${50 + windowCount * 20}px`;
+      win.style.left = `${50 + windowCount * 20}px`;
       win.style.zIndex = zIndex++;
+      win.dataset.max = '0';
       win.innerHTML = `
         <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
-          <div class="buttons">
-            <div></div><div></div><div></div>
-          </div>
+          <div class="buttons"><div></div><div></div><div></div></div>
           <div class="window-title">Doom</div>
         </div>
         <div class="window-content">
-          <div class="dos-container" id="dos-${windowCount}"></div>
+          <div class="dos-container" id="${id}"></div>
         </div>`;
       document.body.appendChild(win);
 
-      jsDos.createInstance({
-        id: `dos-${windowCount}`,
-        wdosboxUrl: 'https://js-dos.com/7.4.0/wdosbox.js'
-      }).ready.then(dos => {
-        dos.run('https://js-dos.com/cdn/6.22.1/games/doom/doom1.wad');
-      });
+      const btns = win.querySelectorAll('.buttons div');
+      btns[0].onclick = () => win.remove();
+      btns[1].onclick = () => win.style.display = 'none';
+      btns[2].onclick = () => toggleMax(win);
+
+      Dos(document.getElementById(id), { wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js' })
+        .then(dos => dos.run('https://js-dos.com/cdn/6.22.1/games/doom/doom1.wad'));
     }
 
-    // Drag & drop handlers
     let offsetX, offsetY, draggedWin;
     function startDrag(e, win) {
       draggedWin = win;
@@ -197,8 +194,8 @@
     }
     function drag(e) {
       if (draggedWin) {
-        draggedWin.style.left = (e.clientX - offsetX) + 'px';
-        draggedWin.style.top = (e.clientY - offsetY) + 'px';
+        draggedWin.style.left = `${e.clientX - offsetX}px`;
+        draggedWin.style.top = `${e.clientY - offsetY}px`;
         draggedWin.style.zIndex = zIndex++;
       }
     }
