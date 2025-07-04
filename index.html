@@ -6,8 +6,9 @@
   <title>Phillips OS Demo</title>
   <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png" />
 
-  <!-- Load JS-DOS runtime before our code -->
-  <script src="https://js-dos.com/6.22.1/js-dos.js" crossorigin="anonymous"></script>
+  <!-- js-dos styles and runtime -->
+  <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css" />
+  <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
 
   <style>
     /* Global styles */
@@ -43,4 +44,117 @@
     /* Window styles */
     @keyframes disappear { to { opacity: 0; transform: scale(0.5); } }
     .minimizing { animation: disappear 0.5s ease forwards; cursor: wait; }
-    .window
+    .window {
+      position: absolute; width: 400px; height: 300px;
+      background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column; overflow: hidden;
+      z-index: 200;
+    }
+    .window[data-max="1"] {
+      top: 22px !important; left: 0 !important;
+      width: 100% !important; height: calc(100% - 70px) !important;
+    }
+    .window-header {
+      height: 24px; background: #3a3a3c;
+      display: flex; align-items: center; padding: 0 8px;
+      cursor: move;
+    }
+    .buttons { display: flex; gap: 6px; margin-right: 8px; }
+    .buttons div { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+    .buttons div:nth-child(1) { background: #ff5f56; }
+    .buttons div:nth-child(2) { background: #ffbd2e; }
+    .buttons div:nth-child(3) { background: #27c93f; }
+    .window-title { flex: 1; text-align: center; font-size: 12px; color: #fff; }
+    .window-content { flex: 1; position: relative; overflow: auto; }
+    .dos-container { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <!-- Menubar -->
+  <div id="menubar">
+    <div class="menu-item">🅿</div>
+    <div class="menu-item">File</div>
+    <div class="menu-item">Edit</div>
+    <div class="menu-item">View</div>
+    <div class="menu-spacer"></div>
+    <div id="menubar-right">
+      <div id="clock"></div>
+      <div id="volumeIcon">🔊</div>
+    </div>
+  </div>
+  <!-- Dock -->
+  <div id="dock">
+    <div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
+    <div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
+    <div class="dock-icon" id="finderIcon" title="Finder">📁</div>
+  </div>
+  <!-- Core JS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Clock
+      const clockEl = document.getElementById('clock');
+      function updateClock() {
+        clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+      }
+      updateClock(); setInterval(updateClock, 60000);
+      // Drag helpers
+      let topZ = 200;
+      function startDrag(e, win) {
+        const ox = e.clientX - win.offsetLeft;
+        const oy = e.clientY - win.offsetTop;
+        function onDrag(ev) {
+          win.style.left = ev.clientX - ox + 'px';
+          win.style.top  = ev.clientY - oy + 'px';
+          win.style.zIndex = ++topZ;
+        }
+        function onUp() {
+          document.removeEventListener('mousemove', onDrag);
+          document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', onUp);
+      }
+      // Window creator
+      let winCount = 0;
+      function openWindow(title, contentHTML) {
+        const win = document.createElement('div');
+        win.className = 'window';
+        win.style.top  = (50 + winCount * 20) + 'px';
+        win.style.left = (50 + winCount * 20) + 'px';
+        win.dataset.max = '0';
+        win.innerHTML = `
+          <div class="window-header">
+            <div class="buttons"><div></div><div></div><div></div></div>
+            <div class="window-title">${title}</div>
+          </div>
+          <div class="window-content">${contentHTML}</div>
+        `;
+        document.body.appendChild(win);
+        win.querySelector('.window-header').addEventListener('mousedown', (e) => startDrag(e, win));
+        const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
+        btnClose.addEventListener('click', () => win.remove());
+        btnMin.addEventListener('click', () => {
+          win.classList.add('minimizing');
+          win.addEventListener('animationend', () => {
+            win.style.display='none';
+            win.classList.remove('minimizing');
+          }, { once:true });
+        });
+        btnMax.addEventListener('click', () => win.dataset.max = win.dataset.max==='1'?'0':'1');
+        winCount++;
+        return win;
+      }
+      // Dock handlers
+      document.getElementById('finderIcon').addEventListener('click', () => openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>'));
+      document.getElementById('browserIcon').addEventListener('click', () => openWindow('Browser', '<iframe src="https://example.com" style="width:100%;height:100%;border:none;"></iframe>'));
+      document.getElementById('daggerIcon').addEventListener('click', () => {
+        const win = openWindow('Daggerfall', `<div class="dos-container" id="dos-${winCount}"></div>`);
+        const dosEl = win.querySelector('.dos-container');
+        // Use local js-dos bundle for Daggerfall
+        Dos(dosEl, { url: 'msdos_Elder_Scrolls_The_-_Daggerfall_1996.jsdos' });
+      });
+    });
+  </script>
+</body>
+</html>
