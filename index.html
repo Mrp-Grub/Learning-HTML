@@ -6,7 +6,7 @@
   <title>Phillips OS Demo</title>
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png"/>
 
-  <!-- Optionally keep js-dos runtime -->
+  <!-- js-dos runtime (optional) -->
   <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css" />
   <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
 
@@ -18,7 +18,6 @@
       font-family:-apple-system, BlinkMacSystemFont, sans-serif;
       color:#fff;
     }
-
     /* Menubar */
     #menubar {
       position:absolute; top:0; left:0; right:0; height:22px;
@@ -26,7 +25,6 @@
       display:flex; align-items:center; padding:0 8px; font-size:12px; z-index:100;
     }
     .menu-spacer { flex:1 }
-
     /* Dock */
     #dock {
       position:absolute; bottom:0; left:50%; transform:translateX(-50%);
@@ -39,21 +37,20 @@
       cursor:pointer; user-select:none;
     }
 
-    /* Window */
+    /* Window styles */
     .window {
       position:absolute; width:400px; height:300px;
       background:#2c2c2e; border:1px solid #3a3a3c; border-radius:6px;
       box-shadow:0 4px 16px rgba(0,0,0,0.5);
       display:flex; flex-direction:column; overflow:hidden; z-index:200;
     }
-    /* When maximized */
+    /* CSS maximize (fills under menubar and above dock) */
     .window[data-max="1"] {
       top:22px!important;
       left:0!important;
       width:100%!important;
-      height:calc(100% - 62px)!important; /* 22px menubar + ~40px dock */
+      height:calc(100% - 62px)!important;
     }
-
     .window-header {
       height:24px; background:#3a3a3c;
       display:flex; align-items:center; padding:0 8px; cursor:move;
@@ -75,7 +72,6 @@
     <div class="menu-spacer"></div>
     <div id="clock"></div>
   </div>
-
   <div id="dock">
     <div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
     <div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
@@ -84,16 +80,14 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // --- Clock ---
+    // Clock
     const clockEl = document.getElementById('clock');
     function updateClock() {
-      clockEl.textContent = new Date().toLocaleTimeString([], {
-        hour:'2-digit', minute:'2-digit'
-      });
+      clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
     }
     updateClock(); setInterval(updateClock, 60000);
 
-    // --- Drag Helpers ---
+    // Drag Helpers
     let topZ = 200;
     function startDrag(e, win) {
       const ox = e.clientX - win.offsetLeft;
@@ -111,7 +105,7 @@
       document.addEventListener('mouseup', onUp);
     }
 
-    // --- Window Factory ---
+    // Window Factory
     let winCount = 0;
     function openWindow(title, contentHTML) {
       const win = document.createElement('div');
@@ -127,69 +121,64 @@
         <div class="window-content">${contentHTML}</div>
       `;
       document.body.appendChild(win);
-
-      // header drag
-      win.querySelector('.window-header')
-         .addEventListener('mousedown', e => startDrag(e, win));
+      win.querySelector('.window-header').addEventListener('mousedown', e => startDrag(e, win));
 
       const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
       btnClose.addEventListener('click', () => win.remove());
       btnMin.addEventListener('click', () => win.style.display = 'none');
-      btnMax.addEventListener('click', () => {
-        win.dataset.max = win.dataset.max==='1' ? '0' : '1';
+      btnMax.addEventListener('click', async () => {
+        const willMax = win.dataset.max === '0';
+        win.dataset.max = willMax ? '1' : '0';
+        if (willMax) {
+          // Request true fullscreen
+          if (win.requestFullscreen) {
+            try { await win.requestFullscreen({ navigationUI: 'hide' }); } catch {}
+          }
+        } else {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+          }
+        }
       });
 
       winCount++;
       return win;
     }
 
-    // --- Finder ---
-    document.getElementById('finderIcon')
-      .addEventListener('click', () =>
-        openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')
-      );
+    // Finder
+    document.getElementById('finderIcon').addEventListener('click', () =>
+      openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')
+    );
 
-    // --- Browser (YouTube embed) ---
+    // Browser
     document.getElementById('browserIcon').addEventListener('click', () => {
-      const vid  = 'RSL6KqWKFvo';
-      const list = 'RDRSL6KqWKFvo';
-      const src  = `https://www.youtube.com/embed/${vid}?list=${list}&autoplay=1`;
-      const iframe = `
-        <iframe
-          src="${src}"
-          style="width:100%;height:100%;border:none"
-          frameborder="0"
-          allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen"
-          webkitallowfullscreen mozallowfullscreen allowfullscreen>
-        </iframe>`;
-      openWindow('Browser', iframe);
+      const vid = 'RSL6KqWKFvo', list = 'RDRSL6KqWKFvo';
+      const src = `https://www.youtube.com/embed/${vid}?list=${list}&autoplay=1`;
+      openWindow('Browser', `
+        <iframe src="${src}"
+                style="width:100%;height:100%;border:none"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen"
+                webkitallowfullscreen mozallowfullscreen allowfullscreen>
+        </iframe>
+      `);
     });
 
-    // --- Daggerfall (Archive.org embed with fallback) ---
+    // Daggerfall
     document.getElementById('daggerIcon').addEventListener('click', () => {
       const isFirefox = /firefox/i.test(navigator.userAgent);
-      let content;
-      if (isFirefox) {
-        content = `
-          <iframe
-            src="https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996?autoplay=1"
-            style="width:100%;height:100%;border:none"
-            allow="autoplay; fullscreen"
-            webkitallowfullscreen mozallowfullscreen allowfullscreen>
-          </iframe>`;
-      } else {
-        content = `
-          <p>Embedding is blocked in this browser.</p>
-          <p>
-            <a href="https://archive.org/details/msdos_Elder_Scrolls_The_-_Daggerfall_1996"
-               target="_blank" rel="noopener noreferrer">
-              Open Daggerfall in a new tab
-            </a>
-          </p>`;
-      }
+      const content = isFirefox
+        ? `<iframe src="https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996?autoplay=1"
+                     style="width:100%;height:100%;border:none"
+                     allow="autoplay; fullscreen"
+                     webkitallowfullscreen mozallowfullscreen allowfullscreen>
+           </iframe>`
+        : `<p>Embedding is blocked in this browser.</p>
+           <p><a href="https://archive.org/details/msdos_Elder_Scrolls_The_-_Daggerfall_1996"
+                  target="_blank" rel="noopener noreferrer">
+             Open Daggerfall in a new tab</a></p>`;
       openWindow('Daggerfall', content);
     });
-
   });
   </script>
 </body>
