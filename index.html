@@ -1,162 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phillips OS </title>
-  <link rel="icon" type="images/x-icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png" />
-  <!-- JS-DOS v6 -->
-  <script src="https://js-dos.com/6.22.1/js-dos.js" crossorigin="anonymous"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%; overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
-      color: #fff;
-    }
-    #menubar {
-      position: absolute; top: 0; left: 0; right: 0; height: 22px;
-      background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
-      display: flex; align-items: center; padding: 0 8px;
-      font-size: 12px; z-index: 100;
-    }
-    .menu-item { margin-right: 16px; color: #fff; }
-    .menu-spacer { flex: 1; }
-    #menubar-right { display: flex; align-items: center; gap: 8px; }
-    #clock { font-family: monospace; }
-    #dock {
-      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
-      padding: 4px 8px; border-radius: 12px; display: flex;
-      z-index: 100;
-    }
-    .dock-icon {
-      width: 32px; height: 32px; margin: 0 6px;
-      font-size: 28px; line-height: 32px; text-align: center;
-      cursor: pointer;
-    }
-    @keyframes disappear { to { opacity: 0; transform: scale(0.5); } }
-    .minimizing { animation: disappear 0.5s ease forwards; cursor: wait; }
-    .window {
-      position: absolute; width: 400px; height: 300px;
-      background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-      display: flex; flex-direction: column; overflow: hidden;
-      z-index: 200;
-    }
-    .window[data-max="1"] {
-      top: 22px !important; left: 0 !important;
-      width: 100% !important; height: calc(100% - 70px) !important;
-    }
-    .window-header {
-      height: 24px; background: #3a3a3c;
-      display: flex; align-items: center; padding: 0 8px;
-      cursor: move;
-    }
-    .buttons { display: flex; gap: 6px; margin-right: 8px; }
-    .buttons div { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-    .buttons div:nth-child(1) { background: #ff5f56; }
-    .buttons div:nth-child(2) { background: #ffbd2e; }
-    .buttons div:nth-child(3) { background: #27c93f; }
-    .window-title { flex: 1; text-align: center; color: #fff; font-size: 12px; }
-    .window-content { flex: 1; position: relative; overflow: auto; }
-    .dos-container { width: 100%; height: 100%; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phillips OS </title>
+<link rel="icon" type="images/x-icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png" />
+<!-- JS-DOS v6 -->
+<script src="https://js-dos.com/6.22.1/js-dos.js" crossorigin="anonymous"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+width: 100%; height: 100%; overflow: hidden;
+font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+background: #1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
+color: #fff;
+}
+#menubar {
+position: absolute; top: 0; left: 0; right: 0; height: 22px;
+background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
+display: flex; align-items: center; padding: 0 8px;
+font-size: 12px; z-index: 100;
+}
+.menu-item { margin-right: 16px; color: #fff; }
+.menu-spacer { flex: 1; }
+#menubar-right { display: flex; align-items: center; gap: 8px; }
+#clock { font-family: monospace; }
+#dock {
+position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
+padding: 4px 8px; border-radius: 12px; display: flex;
+z-index: 100;
+}
+.dock-icon {
+width: 32px; height: 32px; margin: 0 6px;
+font-size: 28px; line-height: 32px; text-align: center;
+cursor: pointer;
+}
+@keyframes disappear { to { opacity: 0; transform: scale(0.5); } }
+.minimizing { animation: disappear 0.5s ease forwards; cursor: wait; }
+.window {
+position: absolute; width: 400px; height: 300px;
+background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px;
+box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+display: flex; flex-direction: column; overflow: hidden;
+z-index: 200;
+}
+.window[data-max="1"] {
+top: 22px !important; left: 0 !important;
+width: 100% !important; height: calc(100% - 70px) !important;
+}
+.window-header {
+height: 24px; background: #3a3a3c;
+display: flex; align-items: center; padding: 0 8px;
+cursor: move;
+}
+.buttons { display: flex; gap: 6px; margin-right: 8px; }
+.buttons div { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+.buttons div:nth-child(1) { background: #ff5f56; }
+.buttons div:nth-child(2) { background: #ffbd2e; }
+.buttons div:nth-child(3) { background: #27c93f; }
+.window-title { flex: 1; text-align: center; color: #fff; font-size: 12px; }
+.window-content { flex: 1; position: relative; overflow: auto; }
+.dos-container { width: 100%; height: 100%; }
+</style>
 </head>
 <body>
-  <div id="menubar">
+<div id="menubar">
+    <div class="menu-item"> MyWebOS</div>
     <div class="menu-item">🅿</div>
-    <div class="menu-item">File</div>
-    <div class="menu-item">Edit</div>
-    <div class="menu-item">View</div>
-    <div class="menu-spacer"></div>
-    <div id="menubar-right">
-      <div id="clock"></div>
-      <div id="volumeIcon">🔊</div>
-    </div>
-  </div>
-  <div id="dock">
-    <div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
-    <div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
-    <div class="dock-icon" id="finderIcon" title="Finder">📁</div>
-  </div>
-  <script>
-    // Clock
-    const clockEl = document.getElementById('clock');
-    function updateClock() { clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); }
-    updateClock(); setInterval(updateClock, 60000);
-
-    // Drag helpers
-    let zIndex = 200;
-    function startDrag(e, win) {
-      const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
-      function onDrag(e) { win.style.left = (e.clientX - ox) + 'px'; win.style.top = (e.clientY - oy) + 'px'; win.style.zIndex = ++zIndex; }
-      function onUp() { document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', onUp); }
-      document.addEventListener('mousemove', onDrag);
-      document.addEventListener('mouseup', onUp);
-    }
-
-    // Window creator
-    let winCount = 0;
-    function openWindow(title, contentHTML) {
-      const win = document.createElement('div');
-      win.className = 'window';
-      win.style.top = (50 + winCount * 20) + 'px';
-      win.style.left = (50 + winCount * 20) + 'px';
-      win.style.zIndex = ++zIndex;
-      win.dataset.max = '0';
-      win.innerHTML = `
-        <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
-          <div class="buttons"><div></div><div></div><div></div></div>
-          <div class="window-title">${title}</div>
-        </div>
-        <div class="window-content">${contentHTML}</div>
-      `;
-      document.body.appendChild(win);
-      const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
-      btnClose.onclick = () => win.remove();
-      btnMin.onclick = () => { win.classList.add('minimizing'); win.addEventListener('animationend', () => { win.style.display='none'; win.classList.remove('minimizing'); }, { once:true }); };
-      btnMax.onclick = () => win.dataset.max = win.dataset.max === '1' ? '0' : '1';
-      winCount++;
-      return win;
-    }
-
-    // Dock actions
-    document.getElementById('finderIcon').addEventListener('click', () => openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>'));
-    document.getElementById('browserIcon').addEventListener('click', () => openWindow('Browser', '<iframe src="https://www.youtube.com/watch?v=RSL6KqWKFvo&list=RDRSL6KqWKFvo&start_radio=1" style="width:100%;height:100%;border:none;"></iframe>'));
-<!-- load the js-dos runtime first -->
-<script src="https://js-dos.com/6.22.1/wdosbox.js"></script>
-
+<div class="menu-item">File</div>
+<div class="menu-item">Edit</div>
+<div class="menu-item">View</div>
+<div class="menu-spacer"></div>
+<div id="menubar-right">
+<div id="clock"></div>
+<div id="volumeIcon">🔊</div>
+</div>
+</div>
+<div id="dock">
+<div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
+<div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
+<div class="dock-icon" id="finderIcon" title="Finder">📁</div>
+</div>
 <script>
-  // make sure you have a winCount variable
-  let winCount = 0;
+// Clock
+const clockEl = document.getElementById('clock');
+function updateClock() { clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); }
+updateClock(); setInterval(updateClock, 60000);
 
-  document.getElementById('daggerIcon').addEventListener('click', () => {
-    const win = openWindow(
-      'Daggerfall',
-      `<div class="dos-container" id="dos-${winCount}"></div>`
-    );
-    const dosEl = win.querySelector('.dos-container');
+// Drag helpers
+let zIndex = 200;
+function startDrag(e, win) {
+const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
+@@ -108,32 +108,39 @@
+win.dataset.max = '0';
+win.innerHTML = `
+       <div class="window-header" onmousedown="startDrag(event, this.parentElement)">
+         <div class="buttons"><div></div><div></div><div></div></div>
+         <div class="window-title">${title}</div>
+       </div>
+       <div class="window-content">${contentHTML}</div>
+     `;
+document.body.appendChild(win);
+const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
+btnClose.onclick = () => win.remove();
+btnMin.onclick = () => { win.classList.add('minimizing'); win.addEventListener('animationend', () => { win.style.display='none'; win.classList.remove('minimizing'); }, { once:true }); };
+btnMax.onclick = () => win.dataset.max = win.dataset.max === '1' ? '0' : '1';
+winCount++;
+return win;
+}
 
-    if (window.Dos) {
+// Dock actions
+document.getElementById('finderIcon').addEventListener('click', () => openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>'));
+document.getElementById('browserIcon').addEventListener('click', () => openWindow('Browser', '<iframe src="https://www.apple.com" style="width:100%;height:100%;border:none;"></iframe>'));
+document.getElementById('daggerIcon').addEventListener('click', () => {
+const win = openWindow('Daggerfall', `<div class='dos-container' id='dos-${winCount}'></div>`);
+const dosEl = win.querySelector('.dos-container');
+if (window.Dos) {
+        Dos(dosEl, { wdosboxUrl:'https://js-dos.com/6.22.1/wdosbox.js' })
+          .then(dos => dos.run('https://archive.org/download/msdos_Elder_Scrolls_The_-_Daggerfall_1996/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip'))
+          .catch(() => alert('Error launching Daggerfall.'));
       Dos(dosEl, {
-        wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js'
-      })
-      .ready((fs, main) => {
-        fs.extract('https://your-cors-enabled-server.com/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip')
-          .then(() => {
-            main(['-c', 'DAGGER.EXE']);
-          })
-          .catch(err => {
-            console.error('Error extracting ZIP:', err);
-            alert('Error loading Daggerfall: ' + err.message);
-          });  // <-- close .catch()
-      });    // <-- close .ready()
-    } else {
-      console.error('DOS emulation library not found');
-    }
-
-    winCount++;
-  });         // <-- close addEventListener
+      wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js'
+      }).ready((fs, main) => {
+      fs.extract('https://your-cors-enabled-server.com/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip')
+        .then(() => {
+          main(['-c', 'DAGGER.EXE']);
+        })
+        .catch(err => {
+          console.error('Error extracting ZIP:', err);
+          alert('Error loading Daggerfall: ' + err.message);
+}
+});
 </script>
+</body>
+</html>
