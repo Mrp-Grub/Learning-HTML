@@ -2,181 +2,178 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Phillips OS Demo</title>
-  <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png" />
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png"/>
 
-  <!-- js-dos styles and runtime -->
+  <!-- js-dos styles and runtime (only used if you switch to js-dos later) -->
   <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css" />
   <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
 
   <style>
-    /* Global styles */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
-      width: 100%; height: 100%; overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
-      color: #fff;
+      width:100%; height:100%; overflow:hidden;
+      background:#1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
+      font-family:-apple-system, BlinkMacSystemFont, sans-serif; color:#fff;
     }
-    /* Menubar */
     #menubar {
-      position: absolute; top: 0; left: 0; right: 0; height: 22px;
-      background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
-      display: flex; align-items: center; padding: 0 8px;
-      font-size: 12px; z-index: 100;
+      position:absolute; top:0; left:0; right:0; height:22px;
+      background:rgba(28,28,30,0.85); backdrop-filter:blur(10px);
+      display:flex; align-items:center; padding:0 8px; font-size:12px; z-index:100;
     }
-    .menu-item { margin-right: 16px; }
-    .menu-spacer { flex: 1; }
-    #menubar-right { display: flex; align-items: center; gap: 8px; }
-    #clock { font-family: monospace; }
-    /* Dock */
+    .menu-spacer { flex:1; }
     #dock {
-      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      background: rgba(28,28,30,0.85); backdrop-filter: blur(10px);
-      padding: 4px 8px; border-radius: 12px; display: flex; z-index: 100;
+      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+      background:rgba(28,28,30,0.85); backdrop-filter:blur(10px);
+      padding:4px 8px; border-radius:12px; display:flex; z-index:100;
     }
     .dock-icon {
-      width: 32px; height: 32px; margin: 0 6px;
-      font-size: 24px; line-height: 32px; text-align: center;
-      cursor: pointer; user-select: none;
+      width:32px; height:32px; margin:0 6px;
+      font-size:24px; line-height:32px; text-align:center;
+      cursor:pointer; user-select:none;
     }
-    /* Window styles */
-    @keyframes disappear { to { opacity: 0; transform: scale(0.5); } }
-    .minimizing { animation: disappear 0.5s ease forwards; cursor: wait; }
     .window {
-      position: absolute; width: 400px; height: 300px;
-      background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-      display: flex; flex-direction: column; overflow: hidden;
-      z-index: 200;
-    }
-    .window[data-max="1"] {
-      top: 22px !important; left: 0 !important;
-      width: 100% !important; height: calc(100% - 70px) !important;
+      position:absolute; width:400px; height:300px;
+      background:#2c2c2e; border:1px solid #3a3a3c; border-radius:6px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.5);
+      display:flex; flex-direction:column; overflow:hidden; z-index:200;
     }
     .window-header {
-      height: 24px; background: #3a3a3c;
-      display: flex; align-items: center; padding: 0 8px;
-      cursor: move;
+      height:24px; background:#3a3a3c; display:flex; align-items:center;
+      padding:0 8px; cursor:move;
     }
-    .buttons { display: flex; gap: 6px; margin-right: 8px; }
-    .buttons div { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-    .buttons div:nth-child(1) { background: #ff5f56; }
-    .buttons div:nth-child(2) { background: #ffbd2e; }
-    .buttons div:nth-child(3) { background: #27c93f; }
-    .window-title { flex: 1; text-align: center; font-size: 12px; color: #fff; }
-    .window-content { flex: 1; position: relative; overflow: auto; }
-    .dos-container { width: 100%; height: 100%; }
+    .buttons { display:flex; gap:6px; margin-right:8px; }
+    .buttons div {
+      width:12px; height:12px; border-radius:50%; cursor:pointer;
+    }
+    .buttons div:nth-child(1){ background:#ff5f56; }
+    .buttons div:nth-child(2){ background:#ffbd2e; }
+    .buttons div:nth-child(3){ background:#27c93f; }
+    .window-title { flex:1; text-align:center; font-size:12px; color:#fff; }
+    .window-content { flex:1; position:relative; overflow:auto; padding:8px; }
   </style>
 </head>
 <body>
-  <!-- Menubar -->
   <div id="menubar">
-    <div class="menu-item">🅿</div>
-    <div class="menu-item">File</div>
-    <div class="menu-item">Edit</div>
-    <div class="menu-item">View</div>
+    <div>🅿</div><div>File</div><div>Edit</div><div>View</div>
     <div class="menu-spacer"></div>
-    <div id="menubar-right">
-      <div id="clock"></div>
-      <div id="volumeIcon">🔊</div>
-    </div>
+    <div id="clock"></div>
   </div>
-  <!-- Dock -->
+
   <div id="dock">
     <div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
     <div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
     <div class="dock-icon" id="finderIcon" title="Finder">📁</div>
   </div>
-  <!-- Core JS -->
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Clock
-      const clockEl = document.getElementById('clock');
-      function updateClock() {
-        clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-      }
-      updateClock(); setInterval(updateClock, 60000);
-      // Drag helpers
-      let topZ = 200;
-      function startDrag(e, win) {
-        const ox = e.clientX - win.offsetLeft;
-        const oy = e.clientY - win.offsetTop;
-        function onDrag(ev) {
-          win.style.left = ev.clientX - ox + 'px';
-          win.style.top  = ev.clientY - oy + 'px';
-          win.style.zIndex = ++topZ;
-        }
-        function onUp() {
-          document.removeEventListener('mousemove', onDrag);
-          document.removeEventListener('mouseup', onUp);
-        }
-        document.addEventListener('mousemove', onDrag);
-        document.addEventListener('mouseup', onUp);
-      }
-      // Window creator
-      let winCount = 0;
-      function openWindow(title, contentHTML) {
-        const win = document.createElement('div');
-        win.className = 'window';
-        win.style.top  = (50 + winCount * 20) + 'px';
-        win.style.left = (50 + winCount * 20) + 'px';
-        win.dataset.max = '0';
-        win.innerHTML = `
-          <div class="window-header">
-            <div class="buttons"><div></div><div></div><div></div></div>
-            <div class="window-title">${title}</div>
-          </div>
-          <div class="window-content">${contentHTML}</div>
-        `;
-        document.body.appendChild(win);
-        win.querySelector('.window-header').addEventListener('mousedown', (e) => startDrag(e, win));
-        const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
-        btnClose.addEventListener('click', () => win.remove());
-        btnMin.addEventListener('click', () => {
-          win.classList.add('minimizing');
-          win.addEventListener('animationend', () => {
-            win.style.display='none';
-            win.classList.remove('minimizing');
-          }, { once:true });
-        });
-        btnMax.addEventListener('click', () => win.dataset.max = win.dataset.max==='1'?'0':'1');
-        winCount++;
-        return win;
-      }
-// Dock handlers
-document.getElementById('finderIcon').addEventListener('click', () =>
-  openWindow('Finder',
-    '<h2>Finder</h2><p>Your files go here.</p>'
-  )
-);
+  document.addEventListener('DOMContentLoaded', () => {
+    // Clock
+    const clockEl = document.getElementById('clock');
+    function updateClock() {
+      clockEl.textContent = new Date().toLocaleTimeString([], {
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
 
-document.getElementById('browserIcon').addEventListener('click', () => {
-  const videoId = 'RSL6KqWKFvo';
-  const playlist = 'RDRSL6KqWKFvo';
-  const src = `https://www.youtube.com/embed/${videoId}?list=${playlist}&autoplay=1&enablejsapi=1`;
-  const iframe = `
-    <iframe
-      src="${src}"
-      style="width:100%;height:100%;border:none"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-    </iframe>`;
-  openWindow('Browser', iframe);
-});
+    // Drag helpers
+    let topZ = 200;
+    function startDrag(e, win) {
+      const ox = e.clientX - win.offsetLeft;
+      const oy = e.clientY - win.offsetTop;
+      function onDrag(ev) {
+        win.style.left = ev.clientX - ox + 'px';
+        win.style.top  = ev.clientY - oy + 'px';
+        win.style.zIndex = ++topZ;
+      }
+      function onUp() {
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onDrag);
+      document.addEventListener('mouseup', onUp);
+    }
 
-document.getElementById('daggerIcon').addEventListener('click', () => {
-  const embedCode = `
-    <iframe 
-      src="https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996?autoplay=1" 
-      style="width:100%;height:100%;border:none"
-      allow="autoplay; fullscreen"
-      allowfullscreen>
-    </iframe>`;
-  openWindow('Daggerfall', embedCode);
-});
+    // Window factory
+    let winCount = 0;
+    function openWindow(title, contentHTML) {
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.style.top  = (50 + winCount * 20) + 'px';
+      win.style.left = (50 + winCount * 20) + 'px';
+      win.innerHTML = `
+        <div class="window-header">
+          <div class="buttons"><div></div><div></div><div></div></div>
+          <div class="window-title">${title}</div>
+        </div>
+        <div class="window-content">${contentHTML}</div>
+      `;
+      document.body.appendChild(win);
+      win.querySelector('.window-header')
+         .addEventListener('mousedown', e => startDrag(e, win));
+      const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
+      btnClose.addEventListener('click', () => win.remove());
+      btnMin.addEventListener('click', () => win.style.display = 'none');
+      btnMax.addEventListener('click', () => {
+        win.style.width = win.style.height = '';
+        win.style.top = win.style.left = '';
+      });
+      winCount++;
+      return win;
+    }
+
+    // Finder
+    document.getElementById('finderIcon')
+      .addEventListener('click', () =>
+        openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')
+      );
+
+    // Browser
+    document.getElementById('browserIcon').addEventListener('click', () => {
+      const vid = 'RSL6KqWKFvo', list = 'RDRSL6KqWKFvo';
+      const src = `https://www.youtube.com/embed/${vid}?list=${list}&autoplay=1`;
+      const iframe = `
+        <iframe
+          src="${src}"
+          style="width:100%;height:100%;border:none"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>`;
+      openWindow('Browser', iframe);
+    });
+
+    // Daggerfall via Archive.org (Firefox vs others)
+    document.getElementById('daggerIcon').addEventListener('click', () => {
+      const isFirefox = /firefox/i.test(navigator.userAgent);
+      let content;
+      if (isFirefox) {
+        // Embed player in Firefox
+        content = `
+          <iframe
+            src="https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996?autoplay=1"
+            style="width:100%;height:100%;border:none"
+            allow="autoplay; fullscreen"
+            allowfullscreen>
+          </iframe>`;
+      } else {
+        // Fallback for other browsers
+        content = `
+          <p>Embedding is blocked in this browser.</p>
+          <p>
+            <a href="https://archive.org/details/msdos_Elder_Scrolls_The_-_Daggerfall_1996"
+               target="_blank" rel="noopener noreferrer">
+               Open Daggerfall in a new tab
+            </a>
+          </p>`;
+      }
+      openWindow('Daggerfall', content);
+    });
+
+  });
   </script>
 </body>
 </html>
