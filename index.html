@@ -66,7 +66,7 @@
 </head>
 <body>
   <div id="menubar">
-    <div class="menu-item"> MyWebOS</div>
+    <div class="menu-item">🅿</div>
     <div class="menu-item">File</div>
     <div class="menu-item">Edit</div>
     <div class="menu-item">View</div>
@@ -129,9 +129,16 @@
       const win = openWindow('Daggerfall', `<div class='dos-container' id='dos-${winCount}'></div>`);
       const dosEl = win.querySelector('.dos-container');
       if (window.Dos) {
-        Dos(dosEl, { wdosboxUrl:'https://js-dos.com/6.22.1/wdosbox.js' })
-          .then(dos => dos.run('https://archive.org/download/msdos_Elder_Scrolls_The_-_Daggerfall_1996/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip'))
-          .catch(() => alert('Error launching Daggerfall.'));
+      Dos(dosEl, {
+      wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js'
+      }).ready((fs, main) => {
+      fs.extract('https://your-cors-enabled-server.com/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip')
+        .then(() => {
+          main(['-c', 'DAGGER.EXE']);
+        })
+        .catch(err => {
+          console.error('Error extracting ZIP:', err);
+          alert('Error loading Daggerfall: ' + err.message);
       }
     });
   </script>
