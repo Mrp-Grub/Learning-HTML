@@ -164,10 +164,24 @@ document
     openWindow('Browser', iframe);
   });
       document.getElementById('daggerIcon').addEventListener('click', () => {
-        const win = openWindow('Daggerfall', `<div class="dos-container" id="dos-${winCount}"></div>`);
-        const dosEl = win.querySelector('.dos-container');
-        // Use local js-dos bundle for Daggerfall
-        Dos(dosEl, { url: 'msdos_Elder_Scrolls_The_-_Daggerfall_1996.jsdos' });
+  // The exact src will come from the “Embed” box on Archive.org
+  const embedCode = `
+    document.getElementById('daggerIcon').addEventListener('click', () => {
+  // The exact src will come from the “Embed” box on Archive.org
+  const embedCode = `
+    <iframe 
+      src="https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996?autoplay=1" 
+      style="width:100%;height:100%;border:none"
+      allow="autoplay; fullscreen"
+      allowfullscreen>
+    </iframe>`;
+
+  openWindow('Daggerfall', embedCode);
+});
+>`;
+
+  openWindow('Daggerfall', embedCode);
+});
       });
     });
   </script>
