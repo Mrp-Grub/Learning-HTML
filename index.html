@@ -125,22 +125,38 @@
     // Dock actions
     document.getElementById('finderIcon').addEventListener('click', () => openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>'));
     document.getElementById('browserIcon').addEventListener('click', () => openWindow('Browser', '<iframe src="https://www.youtube.com/watch?v=RSL6KqWKFvo&list=RDRSL6KqWKFvo&start_radio=1" style="width:100%;height:100%;border:none;"></iframe>'));
-    document.getElementById('daggerIcon').addEventListener('click', () => {
-      const win = openWindow('Daggerfall', `<div class='dos-container' id='dos-${winCount}'></div>`);
-      const dosEl = win.querySelector('.dos-container');
-      if (window.Dos) {
+<!-- load the js-dos runtime first -->
+<script src="https://js-dos.com/6.22.1/wdosbox.js"></script>
+
+<script>
+  // make sure you have a winCount variable
+  let winCount = 0;
+
+  document.getElementById('daggerIcon').addEventListener('click', () => {
+    const win = openWindow(
+      'Daggerfall',
+      `<div class="dos-container" id="dos-${winCount}"></div>`
+    );
+    const dosEl = win.querySelector('.dos-container');
+
+    if (window.Dos) {
       Dos(dosEl, {
-      wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js'
-      }).ready((fs, main) => {
-      fs.extract('https://your-cors-enabled-server.com/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip')
-        .then(() => {
-          main(['-c', 'DAGGER.EXE']);
-        })
-        .catch(err => {
-          console.error('Error extracting ZIP:', err);
-          alert('Error loading Daggerfall: ' + err.message);
-      }
-    });
-  </script>
-</body>
-</html>
+        wdosboxUrl: 'https://js-dos.com/6.22.1/wdosbox.js'
+      })
+      .ready((fs, main) => {
+        fs.extract('https://your-cors-enabled-server.com/msdos_Elder_Scrolls_The_-_Daggerfall_1996.zip')
+          .then(() => {
+            main(['-c', 'DAGGER.EXE']);
+          })
+          .catch(err => {
+            console.error('Error extracting ZIP:', err);
+            alert('Error loading Daggerfall: ' + err.message);
+          });  // <-- close .catch()
+      });    // <-- close .ready()
+    } else {
+      console.error('DOS emulation library not found');
+    }
+
+    winCount++;
+  });         // <-- close addEventListener
+</script>
