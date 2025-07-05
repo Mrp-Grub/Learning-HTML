@@ -154,7 +154,7 @@
 <body>
 
   <!-- ===== Boot Screen ===== -->
-  <section id="boot" class="screen">
+    <section id="boot" class="screen show">
     <div id="bootLogo"></div>
     <div id="bootBar"><div id="bootFill"></div></div>
   </section>
@@ -226,12 +226,7 @@
       } else {
       alert('Wrong password');
     };
-    document.getElementById('pwdBtn').onclick = () => {
-    const adminPwdBox = document.getElementById('adminPwdBox');
-    };
-    document.getElementById('pwdBtn').onclick = () => {
-      if (document.getElementById('adminPwd').value === 'password123') startSession('Admin');
-      else alert('Wrong password');
+    document.getElementById('pwdBtn').onclick = submitAdminLogin;
     };
 
     // ——— Terminal toggle ———
