@@ -3,33 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phillips OS</title>
+  <title>Phillips OS — Boot + Login</title>
   <style>
-    /* ---------- Globals ---------- */
-    :root{
-      --green:#27c93f;
-      --backdrop:rgba(28,28,30,.85);
-    }
+    :root { --green:#27c93f; --blue:#0078D7; }
     *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#000;overflow:hidden;color:#fff}
+    html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont, sans-serif;background:#000;color:#fff;overflow:hidden}
     .hidden{opacity:0;pointer-events:none}
-    /* ---------- Boot ---------- */
-    .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;transition:opacity .5s;z-index:100}
+    .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
+    /* Boot */
     #bootLogo{width:100px;height:100px;background:url(https://cdn-icons-png.flaticon.com/512/5977/5977575.png)center/contain no-repeat;margin-bottom:20px}
     #bootBar{width:180px;height:8px;background:#333;border-radius:6px;overflow:hidden}
-    #bootFill{height:100%;width:0;background:var(--green);transition:width 2s linear}
-    /* ---------- Login (mac‑style) ---------- */
-    #login{display:flex;align-items:center;justify-content:center;gap:60px}
-    .userCard{position:relative;text-align:center;transition:transform .3s;cursor:pointer}
+    #bootFill{width:0;height:100%;background:var(--green);transition:width 2s linear}
+    /* Login */
+    #login, #adminLogin {
+      position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:80px
+    }
+    .userCard{position:absolute;text-align:center}
+    #guestCard{left:385px;bottom:80px}
+    #adminCard, #adminLoginCard{left:50%;transform:translateX(-50%);bottom:80px}
     .userCard img{width:110px;height:110px;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.6)}
     .userLabel{margin-top:8px;font-size:14px}
-    /* hidden user slides in */
-    #adminCard{transform:translateX(200%);opacity:0;transition:transform .4s,opacity .4s}
-    #login:hover #adminCard{transform:translateX(0);opacity:1}
-    /* password box */
-    #pwdBox{margin-top:12px;display:none}
-    #pwdBox input{padding:6px 10px;border-radius:6px;border:none;background:#2c2c2c;color:#fff}
-    #pwdBox button{margin-left:8px;padding:6px 14px;border:none;border-radius:6px;background:#0078D7;color:#fff;cursor:pointer}
+    .loginBtn{margin-top:6px;padding:6px 14px;border:none;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;font-size:13px}
+    #pwdBox, #adminPwdBox{margin-top:20px;display:none}
+    #pwdBox input, #adminPwdBox input{padding:6px 10px;border-radius:6px;border:none;background:#222;color:#fff}
+    #pwdBox button, #adminPwdBox button{margin-left:8px;padding:6px 14px;border:none;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer}
+    /* Terminal */
+    #terminal{position:absolute;inset:0;background:#000c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:monospace}
+    #termInput{width:60%;max-width:320px;padding:6px 10px;border:none;border-radius:4px;background:#111;color:#0f0}
+  </style>
+</head>
+<body>
+  <!-- Boot Screen -->
+  <div id="boot" class="screen">
+    <div id="bootLogo"></div>
+    <div id="bootBar"><div id="bootFill"></div></div>
+  </div>
+
+  <!-- Guest Login Screen -->
+  <div id="login" class="screen hidden">
+    <div id="guestCard" class="userCard">
+      <img src="https://i.imgur.com/UPVxPjb.png"/>
+      <div class="userLabel">Guest</div>
+      <button id="guestBtn" class="loginBtn">Log In</button>
+    </div>
+  </div>
+
+  <!-- Admin Login Screen -->
+  <div id="adminLogin" class="screen hidden">
+    <div id="adminLoginCard" class="userCard">
+      <img src="https://i.imgur.com/8Km9tLL.jpg"/>
+      <div class="userLabel">Admin</div>
+      <button id="adminBtn" class="loginBtn">Log In</button>
+      <div id="adminPwdBox">
+        <input id="adminPwd" type="password" placeholder="Password"/>
+        <button id="pwdBtn">Enter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terminal -->
+  <div id="terminal" class="hidden">
+    <div>PhillipsOS Terminal — type <code>sudo admin login</code></div>
+    <input id="termInput" autocomplete="off" spellcheck="false"/>
+  </div>
+
+<script>
+const boot=document.getElementById('boot');
+const login=document.getElementById('login');
+const adminLogin=document.getElementById('adminLogin');
+setTimeout(()=>{
+  document.getElementById('bootFill').style.width='100%';
+  setTimeout(()=>{boot.classList.add('hidden');login.classList.remove('hidden');},2000);
+},200);
+
+document.documentElement.requestFullscreen?.().catch(()=>{});
+
+const guestBtn=document.getElementById('guestBtn');
+const adminBtn=document.getElementById('adminBtn');
+const adminPwdBox=document.getElementById('adminPwdBox');
+
+guestBtn.onclick=()=>startSession('Guest');
+
+adminBtn.onclick = () => {
+  adminPwdBox.style.display = 'block';
+  document.getElementById('adminPwd').focus();
+};
+
+document.getElementById('pwdBtn').onclick=()=>{
+  if(document.getElementById('adminPwd').value==='password123')startSession('Admin');
+  else alert('Wrong password');
+};
+
+function startSession(user){
+  login.classList.add('hidden');
+  adminLogin.classList.add('hidden');
+  alert(`${user} logged in!`);
+}
+
+const terminal=document.getElementById('terminal');
+const termInput=document.getElementById('termInput');
+let terminalOpen=false;
+window.addEventListener('keydown',e=>{
+  if(e.altKey && e.key.toLowerCase()==='t' && !terminalOpen){
+    e.preventDefault();
+    terminal.classList.remove('hidden');
+    terminalOpen=true;
+    termInput.value='';
+    termInput.focus();
+  }
+});
+termInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const cmd=termInput.value.trim();
+    if(cmd.toLowerCase()==='sudo admin login'){
+  terminal.classList.add('hidden');
+  terminalOpen=false;
+  login.classList.add('hidden');
+  adminLogin.classList.remove('hidden');
+  adminPwdBox.style.display='block';
+  document.getElementById('adminPwd').focus();
+  termInput.value='';
+}else{
+      alert('Unknown command');
+      termInput.value='';
+    }
+  }
+});
+
+let adminSequence = ['R2','L2','R2','L2','L1','L1','R1','R1','L1','R1','L2','L2','R2','R2','Start'];
+let inputSequence = [];
+let lastButtons = [];
+
+function buttonName(index) {
+  const names = {
+    0: 'A', 1: 'B', 2: 'X', 3: 'Y',
+    4: 'L1', 5: 'R1', 6: 'L2', 7: 'R2',
+    8: 'Select', 9: 'Start',
+    10: 'L3', 11: 'R3',
+    12: 'Up', 13: 'Down', 14: 'Left', 15: 'Right'
+  };
+  return names[index] || `Btn${index}`;
+}
+
+function pollGamepad() {
+  const gps = navigator.getGamepads();
+  if (!gps) return;
+  const gp = gps[0];
+  if (!gp) return;
+
+  gp.buttons.forEach((btn, i) => {
+    const isPressed = btn.pressed;
+    const name = buttonName(i);
+
+    if (isPressed && !lastButtons[i]) {
+      inputSequence.push(name);
+      if (inputSequence.length > adminSequence.length)
+        inputSequence.shift();
+
+      if (inputSequence.join() === adminSequence.join()) {
+  terminal.classList.add('hidden');
+  terminalOpen = false;
+  login.classList.add('hidden');
+  adminLogin.classList.remove('hidden');
+  adminPwdBox.style.display = 'block';
+  document.getElementById('adminPwd').focus();
+}
+    }
+    lastButtons[i] = isPressed;
+  });
+  requestAnimationFrame(pollGamepad);
+
     /* ---------- Desktop ---------- */
     #desktopUI{display:none;width:100%;height:100%;position:relative;background:#1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg')center/cover no-repeat}
     #menubar{position:absolute;top:0;left:0;right:0;height:22px;background:var(--backdrop);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 8px;font-size:12px;z-index:10}
