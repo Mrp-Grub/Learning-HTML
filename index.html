@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phillips OS — Boot + Login</title>
   <style>
-    /* ========== Root Variables & Resets ========== */
     :root { --green: #27c93f; --blue: #0078D7; --backdrop: rgba(0,0,0,0.3); }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -16,70 +15,44 @@
 
     /* ========== Screen Base Styles ========== */
     .screen {
-      position: absolute;
-      inset: 0;
-      display: flex;               /* ADD THIS */
-      flex-direction: column;      /* ADD THIS */
-      align-items: center;         /* ADD THIS */
-      justify-content: center;     /* ADD THIS */
-      opacity: 0;
-      pointer-events: none;
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
       transition: opacity 0.4s;
     }
     .screen.show {
-      opacity: 1;
-      pointer-events: all;
-     }
+      opacity: 1; pointer-events: all;
+    }
     .hidden { opacity: 0; pointer-events: none; }
 
-    /* ========== Boot Bar Styles ========== */
+    /* ========== Boot Styles ========== */
     #bootLogo { width: 100px; height: 100px; background: url(https://cdn-icons-png.flaticon.com/512/5977/5977575.png) center/contain no-repeat; margin-bottom: 20px; }
     #bootBar { width: 180px; height: 8px; background: #333; border-radius: 6px; overflow: hidden; }
     #bootFill { width: 0; height: 100%; background: var(--green); transition: width 2s linear; }
 
     /* ========== Login Styles ========== */
     #login, #adminLogin {
-        position: absolute;
-        top: 38%; /* tweak this value as needed */
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-    }
-    .userCard { position: absolute; text-align: center; }
-    #guestCard { position: absolute;
-      top: 38%; /* adjust this value until it's visually aligned with boot logo */
+      position: absolute;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      text-align: center; 
+      transform: translate(-50%, -50%);
+      text-align: center;
     }
-    #adminLoginCard { left: 50%; transform: translateX(-50%); }
     .userCard img {
       width: 110px; height: 110px; border-radius: 50%;
       box-shadow: 0 4px 12px rgba(0,0,0,.6);
     }
     .userLabel { margin-top: 8px; font-size: 14px; }
-    .loginBtn {
-      margin-top: 6px; padding: 6px 14px;
-      border: none; border-radius: 6px;
-      background: var(--blue); color: #fff;
-      cursor: pointer; font-size: 13px;
-    }
 
     /* ========== Password Box Styles ========== */
     #adminPwdBox {
-      margin-top: 20px; display: none;
-      text-align: center;
+      margin-top: 20px; display: none; text-align: center;
     }
     #adminPwdBox input {
       padding: 6px 10px; border-radius: 6px;
       border: none; background: #222; color: #fff;
       width: 140px;
-    }
-    #adminPwdBox button {
-      margin-left: 8px; padding: 6px 14px;
-      border: none; border-radius: 6px;
-      background: var(--blue); color: #fff;
-      cursor: pointer;
     }
 
     /* ========== Terminal Styles ========== */
@@ -89,10 +62,11 @@
       flex-direction: column; align-items: center;
       justify-content: center; gap: 12px;
       font-family: monospace;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
     }
     #terminal.show {
-  opacity: 1;
-  pointer-events: all;
+      opacity: 1; pointer-events: all;
     }
     #termInput {
       width: 60%; max-width: 320px;
@@ -117,7 +91,6 @@
     #menubar > div { margin-right: 12px; }
     #clock { margin-left: auto; font-weight: bold; }
 
-    /* ========== Dock Styles ========== */
     #dock {
       position: absolute; bottom: 16px;
       left: 50%; transform: translateX(-50%);
@@ -139,7 +112,6 @@
       pointer-events: none;
     }
 
-    /* ========== Window Styles ========== */
     .window {
       position: absolute; top: 80px; left: 120px;
       width: 800px; height: 600px;
@@ -162,14 +134,13 @@
   </style>
 </head>
 <body>
-
-  <!-- ===== Boot Screen ===== -->
-    <section id="boot" class="screen show">
+  <!-- Boot Screen -->
+  <section id="boot" class="screen show">
     <div id="bootLogo"></div>
     <div id="bootBar"><div id="bootFill"></div></div>
   </section>
 
-  <!-- ===== Guest Login Screen ===== -->
+  <!-- Guest Login -->
   <section id="login" class="screen hidden">
     <div id="guestCard" class="userCard">
       <img src="https://i.imgur.com/UPVxPjb.png" alt="Guest">
@@ -177,25 +148,24 @@
     </div>
   </section>
 
-  <!-- ===== Admin Login Screen ===== -->
+  <!-- Admin Login -->
   <section id="adminLogin" class="screen hidden">
     <div id="adminLoginCard" class="userCard">
       <img src="https://i.imgur.com/8Km9tLL.jpg" alt="Admin">
       <div class="userLabel">Admin</div>
       <div id="adminPwdBox">
-        <!-- Password Entry -->
         <input id="adminPwd" type="password" placeholder="Password">
       </div>
     </div>
   </section>
 
-  <!-- ===== Terminal ===== -->
-  <section id="terminal" class="screen hidden">
+  <!-- Terminal -->
+  <section id="terminal" class="screen">
     <div>Terminal</div>
     <input id="termInput" autocomplete="off" spellcheck="false">
   </section>
 
-  <!-- ===== Desktop UI ===== -->
+  <!-- Desktop -->
   <section id="desktopUI">
     <div id="menubar">
       <div><img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" style="height:16px" alt="Logo"></div>
@@ -209,124 +179,121 @@
   </section>
 
   <script>
-    // ——— Boot flow ———
     const boot = document.getElementById('boot');
+    const login = document.getElementById('login');
+    const adminLogin = document.getElementById('adminLogin');
+    const adminPwdBox = document.getElementById('adminPwdBox');
+    const desktopUI = document.getElementById('desktopUI');
+
     setTimeout(() => {
       document.getElementById('bootFill').style.width = '100%';
       setTimeout(() => {
         boot.classList.remove('show');
         boot.classList.add('hidden');
-        const login = document.getElementById('login');
         login.classList.remove('hidden');
         login.classList.add('show');
       }, 2000);
     }, 200);
 
-    document.documentElement.requestFullscreen?.().catch(() => {});
-
-    // ——— Login logic ———
-    const login = document.getElementById('login');
+    // Guest Login
     document.getElementById('guestCard').onclick = () => {
       login.classList.add('hidden');
-      login.classList.remove('show');
-      desktopUI.style.display = 'flex';
+      desktopUI.style.display = 'block';
     };
-    document.getElementById('adminPwd').addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const pwd = e.target.value;
-    if (pwd === 'password123') {
-      adminLogin.classList.add('hidden');
-      adminLogin.classList.remove('show');
-    } else {
-      alert('Wrong password');
-    }
-  }
-});
-    document.getElementById('pwdBtn').onclick = submitAdminLogin;
 
-    // ——— Terminal toggle ———
+    // Admin Password Submit
+    document.getElementById('adminPwd').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        if (e.target.value === 'password123') {
+          adminLogin.classList.add('hidden');
+          desktopUI.style.display = 'block';
+        } else {
+          alert('Wrong password');
+        }
+      }
+    });
+
+    // Terminal toggle
     const terminal = document.getElementById('terminal');
     const termInput = document.getElementById('termInput');
     let terminalOpen = false;
+
     window.addEventListener('keydown', e => {
-      console.log(`Key: ${e.key}, Ctrl: ${e.ctrlKey}, Shift: ${e.shiftKey}`);
-        if (e.ctrlKey && e.shiftKey && e.key === 'Z' && !terminalOpen) {
-          e.preventDefault();
-          terminal.classList.remove('hidden');
-          terminalOpen = true;
-          termInput.value = '';
-          termInput.focus();
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        terminal.classList.add('show');
+        terminalOpen = true;
+        termInput.value = '';
+        termInput.focus();
       }
     });
+
     termInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const input = termInput.value.trim().toLowerCase();
-    if (input === 'sudo admin login') {
-      terminal.classList.remove('show');
-      terminalOpen = false;
-      document.getElementById('login').classList.add('hidden');
-      document.getElementById('adminLogin').classList.remove('hidden');
-      adminPwdBox.style.display = 'block';
-      document.getElementById('adminPwd').focus();
-    }
-    else if (input === 'exit') {
-      terminal.classList.add('show');
-      terminalOpen = false;
-    } else {
-      alert('Unknown command');
-    }
+      if (e.key === 'Enter') {
+        const input = termInput.value.trim().toLowerCase();
+        if (input === 'sudo admin login') {
+          terminal.classList.remove('show');
+          login.classList.add('hidden');
+          adminLogin.classList.remove('hidden');
+          adminPwdBox.style.display = 'block';
+          document.getElementById('adminPwd').focus();
+        } else if (input === 'exit') {
+          terminal.classList.remove('show');
+        } else {
+          alert('Unknown command');
+        }
         termInput.value = '';
       }
     });
 
-    // ——— Desktop & dock ———
+    // Clock and Applications
     document.addEventListener('DOMContentLoaded', () => {
       const clock = document.getElementById('clock');
       const updateClock = () => clock.textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
       updateClock(); setInterval(updateClock, 60000);
-    });
-    function $startSession() {
-      document.getElementById('login').classList.add('hidden');
-      document.getElementById('desktopUI').style.display = 'block';
-      document.documentElement.requestFullscreen?.();
-    }
-    document.getElementById('guestCard').onclick = $startSession;
 
-    const apps = {
-      daggerfall: {title:'Daggerfall', url:'https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996'},
-      youtube:    {title:'YouTube',    url:'https://www.youtube.com'},
-      files:      {title:'File Manager', url:'https://example.com'}
-    };
-    document.querySelectorAll('.dock-icon').forEach(ic => {
-      ic.onclick = () => {
-        const cfg = apps[ic.dataset.app]; if (!cfg) return;
-        const win = document.createElement('div'); win.className = 'window';
-        win.innerHTML = `
-          <div class="w-header">
-            <span class="w-btn close"></span>
-            <span class="w-btn min"></span>
-            <span class="w-btn max"></span>
-            <div class="w-title">${cfg.title}</div>
-          </div>
-          <div class="w-body"><iframe src="${cfg.url}"></iframe></div>
-        `;
-        document.body.appendChild(win);
-        const [cls, min, max] = win.querySelectorAll('.w-btn');
-        cls.onclick = () => win.remove();
-        min.onclick = () => win.style.display = 'none';
-        max.onclick = () => win.classList.toggle('fullscreen');
-        drag(win);
+      const apps = {
+        daggerfall: {title:'Daggerfall', url:'https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996'},
+        youtube:    {title:'YouTube',    url:'https://www.youtube.com'},
+        files:      {title:'File Manager', url:'https://example.com'}
       };
+
+      document.querySelectorAll('.dock-icon').forEach(icon => {
+        icon.addEventListener('click', () => {
+          const cfg = apps[icon.dataset.app];
+          if (!cfg) return;
+          const win = document.createElement('div');
+          win.className = 'window';
+          win.innerHTML = `
+            <div class="w-header">
+              <span class="w-btn close"></span>
+              <span class="w-btn min"></span>
+              <span class="w-btn max"></span>
+              <div class="w-title">${cfg.title}</div>
+            </div>
+            <div class="w-body"><iframe src="${cfg.url}"></iframe></div>
+          `;
+          document.body.appendChild(win);
+          const [cls, min, max] = win.querySelectorAll('.w-btn');
+          cls.onclick = () => win.remove();
+          min.onclick = () => win.style.display = 'none';
+          max.onclick = () => win.classList.toggle('fullscreen');
+
+          const hdr = win.querySelector('.w-header');
+          hdr.onmousedown = e => {
+            const ox = e.clientX - win.offsetLeft;
+            const oy = e.clientY - win.offsetTop;
+            const move = ev => {
+              win.style.left = ev.clientX - ox + 'px';
+              win.style.top = ev.clientY - oy + 'px';
+            };
+            const up = () => document.removeEventListener('mousemove', move);
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', up, {once:true});
+          };
+        });
+      });
     });
-    function drag(win) {
-      const hdr = win.querySelector('.w-header'); hdr.onmousedown = e => {
-        const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
-        const move = ev => { win.style.left = ev.clientX-ox+'px'; win.style.top = ev.clientY-oy+'px'; };
-        const up = () => document.removeEventListener('mousemove', move);
-        document.addEventListener('mousemove', move);
-        document.addEventListener('mouseup', up, {once:true});
-      };
-    }
   </script>
 </body>
 </html>
