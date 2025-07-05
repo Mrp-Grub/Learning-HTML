@@ -87,17 +87,14 @@
   </div>
 
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const forceFullscreen = async () => {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        }
-      } catch (e) {
-        console.warn('Fullscreen request failed:', e);
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
       }
-    };
-    forceFullscreen();
+    } catch (e) {
+      console.warn('Initial fullscreen request failed:', e);
+    }
     document.addEventListener('click', forceFullscreen, { once: true });
   });
 
@@ -105,7 +102,17 @@
     /* Boot flow */
     const boot=document.getElementById('boot');const login=document.getElementById('login');const desktop=document.getElementById('desktopUI');
     setTimeout(()=>document.getElementById('bootFill').style.width='100%',200);
-    setTimeout(()=>{boot.classList.add('hidden');login.classList.remove('hidden');},2600);
+    setTimeout(async () => {
+      boot.classList.add('hidden');
+      login.classList.remove('hidden');
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (e) {
+        console.warn('Fullscreen request failed at boot:', e);
+      }
+    }, 2600);
 
     /* Clock */
     const clock=document.getElementById('clock');function upd(){clock.textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}upd();setInterval(upd,6e4);
