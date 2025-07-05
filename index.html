@@ -15,7 +15,15 @@
     }
 
     /* ========== Screen Base Styles ========== */
-    .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity .4s; }
+    .screen {
+     opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+     }
+    .screen.show {
+      opacity: 1;
+      pointer-events: all;
+     }
     .hidden { opacity: 0; pointer-events: none; }
 
     /* ========== Boot Bar Styles ========== */
@@ -205,12 +213,18 @@
     document.documentElement.requestFullscreen?.().catch(() => {});
 
     // ——— Login logic ———
-      document.getElementById('guestCard').onclick = () => startSession('Guest');
-    document.getElementById('adminLoginCard').onclick = () => {
-      document.getElementById('login').classList.add('hidden');
-      document.getElementById('adminLogin').classList.remove('hidden');
-      adminPwdBox.style.display = 'block';
-      document.getElementById('adminPwd').focus();
+    document.getElementById('guestCard').onclick = () => {
+      login.classList.add('hidden');
+      login.classList.remove('show');
+      desktopUI.style.display = 'flex';
+};
+    function submitAdminLogin() {
+      if (document.getElementById('adminPwd').value === 'password123') {
+      adminLogin.classList.add('hidden');
+      adminLogin.classList.remove('show');
+      desktopUI.style.display = 'flex';
+      } else {
+      alert('Wrong password');
     };
     document.getElementById('pwdBtn').onclick = () => {
     const adminPwdBox = document.getElementById('adminPwdBox');
@@ -219,11 +233,6 @@
       if (document.getElementById('adminPwd').value === 'password123') startSession('Admin');
       else alert('Wrong password');
     };
-    function startSession(user) {
-      document.getElementById('login').classList.add('hidden');
-      document.getElementById('adminLogin').classList.add('hidden');
-      alert(`${user} logged in!`);
-    }
 
     // ——— Terminal toggle ———
     const terminal = document.getElementById('terminal');
