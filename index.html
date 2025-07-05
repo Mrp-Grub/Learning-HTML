@@ -2,227 +2,131 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Phillips OS Demo</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png"/>
-  <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css" />
-  <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phillips OS</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box }
-    html, body {
-      width:100%; height:100%; overflow:hidden;
-      background:#1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
-      font-family:-apple-system, BlinkMacSystemFont, sans-serif;
-      color:#fff;
+    /* ---------- Globals ---------- */
+    :root{
+      --green:#27c93f;
+      --backdrop:rgba(28,28,30,.85);
     }
-    #menubar {
-      position:absolute; top:0; left:0; right:0; height:22px;
-      background:rgba(28,28,30,0.85); backdrop-filter:blur(10px);
-      display:flex; align-items:center; padding:0 8px; font-size:12px; z-index:100;
-    }
-    .menu-spacer { flex:1 }
-    #dock {
-      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-      background:rgba(28,28,30,0.85); backdrop-filter:blur(10px);
-      padding:4px 8px; border-radius:12px; display:flex; z-index:100;
-    }
-    .dock-icon {
-      width:32px; height:32px; margin:0 6px;
-      font-size:24px; line-height:32px; text-align:center;
-      cursor:pointer; user-select:none;
-    }
-    .window {
-      position:absolute; width:640px; height:480px;
-      background:#2c2c2e; border:none; border-radius:0;
-      box-shadow:none;
-      display:flex; flex-direction:column; overflow:hidden; z-index:200;
-      transition:all 0.2s ease;
-    }
-    .window.maximized {
-      top:0!important;
-      left:0!important;
-      width:100%!important;
-      height:100%!important;
-      border:none; border-radius:0;
-      box-shadow:none;
-    }
-    .window-header {
-      height:24px; background:#3a3a3c;
-      display:flex; align-items:center; padding:0 8px; cursor:move;
-      opacity:1; transition:opacity 0.2s ease;
-    }
-    .window.maximized .window-header {
-      opacity:0;
-    }
-    .window.show-header .window-header {
-      opacity:1 !important;
-    }
-    .buttons { display:flex; gap:6px; margin-right:8px }
-    .buttons div {
-      width:12px; height:12px; border-radius:50%; cursor:pointer;
-    }
-    .buttons div:nth-child(1){ background:#ff5f56 }
-    .buttons div:nth-child(2){ background:#ffbd2e }
-    .buttons div:nth-child(3){ background:#27c93f }
-    .window-title { flex:1; text-align:center; font-size:12px }
-    .window-content {
-      flex:1; position:relative; overflow:hidden;
-      padding:0; margin:0;
-    }
-    .window-content iframe,
-    .window-content canvas,
-    .window-content > * {
-      width:100%!important;
-      height:100%!important;
-      display:block;
-      border:none;
-      margin:0; padding:0;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#000;overflow:hidden;color:#fff}
+    .hidden{opacity:0;pointer-events:none}
+    /* ---------- Boot ---------- */
+    .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;transition:opacity .5s;z-index:100}
+    #bootLogo{width:100px;height:100px;background:url(https://cdn-icons-png.flaticon.com/512/5977/5977575.png)center/contain no-repeat;margin-bottom:20px}
+    #bootBar{width:180px;height:8px;background:#333;border-radius:6px;overflow:hidden}
+    #bootFill{height:100%;width:0;background:var(--green);transition:width 2s linear}
+    /* ---------- Login (mac‑style) ---------- */
+    #login{display:flex;align-items:center;justify-content:center;gap:60px}
+    .userCard{position:relative;text-align:center;transition:transform .3s;cursor:pointer}
+    .userCard img{width:110px;height:110px;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.6)}
+    .userLabel{margin-top:8px;font-size:14px}
+    /* hidden user slides in */
+    #adminCard{transform:translateX(200%);opacity:0;transition:transform .4s,opacity .4s}
+    #login:hover #adminCard{transform:translateX(0);opacity:1}
+    /* password box */
+    #pwdBox{margin-top:12px;display:none}
+    #pwdBox input{padding:6px 10px;border-radius:6px;border:none;background:#2c2c2c;color:#fff}
+    #pwdBox button{margin-left:8px;padding:6px 14px;border:none;border-radius:6px;background:#0078D7;color:#fff;cursor:pointer}
+    /* ---------- Desktop ---------- */
+    #desktopUI{display:none;width:100%;height:100%;position:relative;background:#1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg')center/cover no-repeat}
+    #menubar{position:absolute;top:0;left:0;right:0;height:22px;background:var(--backdrop);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 8px;font-size:12px;z-index:10}
+    #menubar>div{margin-right:12px}
+    #clock{margin-left:auto;font-weight:bold}
+    /* Dock */
+    #dock{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;padding:4px 10px;border-radius:18px;background:var(--backdrop);backdrop-filter:blur(10px);z-index:10}
+    .dock-icon{width:40px;height:40px;margin:0 6px;border-radius:10px;cursor:pointer;transition:transform .15s}
+    .dock-icon:hover{transform:scale(1.12);background:rgba(255,255,255,.12)}
+    .dock-icon img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+    /* Window */
+    .window{position:absolute;top:80px;left:120px;width:800px;height:600px;background:#2c2c2e;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:100}
+    .w-header{display:flex;align-items:center;height:24px;padding:0 8px;background:#3a3a3c;cursor:move;gap:6px}
+    .w-btn{width:12px;height:12px;border-radius:50%}
+    .close{background:#FF5F56}.min{background:#FFBD2E}.max{background:#27C93F}
+    .w-title{flex:1;text-align:center;font-size:12px}
+    .w-body{flex:1}
+    .w-body iframe{width:100%;height:100%;border:none}
   </style>
 </head>
 <body>
-  <div id="menubar">
-    <div>🅿</div><div>File</div><div>Edit</div><div>View</div>
-    <div class="menu-spacer"></div>
-    <div id="clock"></div>
+  <!-- Boot Screen -->
+  <div id="boot" class="screen">
+    <div id="bootLogo"></div>
+    <div id="bootBar"><div id="bootFill"></div></div>
   </div>
-  <div id="dock">
-    <div class="dock-icon" id="daggerIcon" title="Daggerfall">🗡️</div>
-    <div class="dock-icon" id="browserIcon" title="Browser">🌐</div>
-    <div class="dock-icon" id="finderIcon" title="Finder">📁</div>
+
+  <!-- Login Screen -->
+  <div id="login" class="screen hidden">
+    <div id="guestCard" class="userCard" data-user="guest">
+      <img src="https://i.imgur.com/UPVxPjb.png" alt="Guest">
+      <div class="userLabel">Guest</div>
+    </div>
+    <div id="adminCard" class="userCard" data-user="admin">
+      <img src="https://i.imgur.com/4ZQZ4Yt.png" alt="Admin">
+      <div class="userLabel">Admin</div>
+      <div id="pwdBox">
+        <input type="password" id="adminPwd" placeholder="Password">
+        <button id="pwdBtn">Enter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop UI -->
+  <div id="desktopUI">
+    <div id="menubar">
+      <div><img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" style="height:16px"></div>
+      <div>File</div><div>Edit</div><div>View</div><div id="clock"></div>
+    </div>
+    <div id="dock">
+      <div class="dock-icon" data-app="daggerfall"><img src="https://cdn-icons-png.flaticon.com/512/181/181549.png"></div>
+      <div class="dock-icon" data-app="youtube"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"></div>
+      <div class="dock-icon" data-app="files"><img src="https://cdn-icons-png.flaticon.com/512/148/148933.png"></div>
+    </div>
   </div>
 
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const clockEl = document.getElementById('clock');
-    function updateClock() {
-      clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      await document.documentElement.requestFullscreen?.();
+    } catch (e) {
+      console.warn('Fullscreen request failed:', e);
     }
-    updateClock(); setInterval(updateClock, 60000);
-
-    let topZ = 200;
-    function startDrag(e, win) {
-      if (win.classList.contains('maximized')) return;
-      const ox = e.clientX - win.offsetLeft;
-      const oy = e.clientY - win.offsetTop;
-      function onDrag(ev) {
-        win.style.left = (ev.clientX - ox) + 'px';
-        win.style.top  = (ev.clientY - oy) + 'px';
-        win.style.zIndex = ++topZ;
-      }
-      function onUp() {
-        document.removeEventListener('mousemove', onDrag);
-        document.removeEventListener('mouseup', onUp);
-      }
-      document.addEventListener('mousemove', onDrag);
-      document.addEventListener('mouseup', onUp);
-    }
-
-    let winCount = 0;
-    function openWindow(title, contentHTML) {
-      const win = document.createElement('div');
-      win.className = 'window';
-      win.style.top = (window.innerHeight / 2 - 240) + 'px';
-      win.style.left = (window.innerWidth / 2 - 320) + 'px';
-      win.innerHTML = `
-        <div class="window-header">
-          <div class="buttons"><div></div><div></div><div></div></div>
-          <div class="window-title">${title}</div>
-        </div>
-        <div class="window-content">${contentHTML}</div>
-      `;
-      document.body.appendChild(win);
-      win.querySelector('.window-header').addEventListener('mousedown', e => startDrag(e, win));
-
-      const [btnClose, btnMin, btnMax] = win.querySelectorAll('.buttons div');
-      btnClose.addEventListener('click', () => win.remove());
-      btnMin.addEventListener('click', () => win.style.display = 'none');
-      btnMax.addEventListener('click', () => {
-        if (!win.classList.contains('maximized')) {
-          win.dataset.prev = JSON.stringify({
-            left: win.style.left,
-            top: win.style.top,
-            width: win.style.width,
-            height: win.style.height
-          });
-          win.classList.add('maximized');
-        } else {
-          const prev = JSON.parse(win.dataset.prev);
-          win.classList.remove('maximized');
-          win.style.left = prev.left;
-          win.style.top = prev.top;
-          win.style.width = prev.width;
-          win.style.height = prev.height;
-        }
-      });
-
-      winCount++;
-      return win;
-    }
-
-    document.addEventListener('mousemove', e => {
-      document.querySelectorAll('.window.maximized').forEach(win => {
-        if (e.clientY < 30) {
-          win.classList.add('show-header');
-        } else {
-          win.classList.remove('show-header');
-        }
-      });
-    });
-
-    document.getElementById('finderIcon').addEventListener('click', () =>
-      openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')
-    );
-
-    document.getElementById('browserIcon').addEventListener('click', () => {
-      const searchHTML = `
-        <input id="ytSearchInput" type="text" placeholder="Search YouTube..." style="width:100%;padding:8px;margin-bottom:8px;font-size:14px;" />
-        <button id="ytSearchBtn" style="padding:6px 12px;">Search</button>
-        <div id="ytVideoResult" style="margin-top:10px;"></div>
-      `;
-
-      const win = openWindow('YouTube Search', searchHTML);
-
-      setTimeout(() => {
-        const input = win.querySelector('#ytSearchInput');
-        const btn = win.querySelector('#ytSearchBtn');
-        const result = win.querySelector('#ytVideoResult');
-
-        const API_KEY = 'YOUR_API_KEY';
-
-        async function searchYouTube(query) {
-          result.innerHTML = "<p>Loading...</p>";
-          try {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=${encodeURIComponent(query)}&key=${API_KEY}`);
-            const data = await res.json();
-            if (data.items && data.items.length > 0) {
-              const videoId = data.items[0].id.videoId;
-              result.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            } else {
-              result.innerHTML = "<p>No results found.</p>";
-            }
-          } catch (err) {
-            result.innerHTML = "<p>Error loading video.</p>";
-            console.error(err);
-          }
-        }
-
-        btn.addEventListener('click', () => {
-          const query = input.value.trim();
-          if (query) searchYouTube(query);
-        });
-
-        input.addEventListener('keypress', e => {
-          if (e.key === 'Enter') btn.click();
-        });
-      }, 100);
-    });
-
-    document.getElementById('daggerIcon').addEventListener('click', () => {
-      const content = `<iframe src="https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996?autoplay=1" allowfullscreen></iframe>`;
-      openWindow('Daggerfall', content);
-    });
   });
+
+  (function(){
+    /* Boot flow */
+    const boot=document.getElementById('boot');const login=document.getElementById('login');const desktop=document.getElementById('desktopUI');
+    setTimeout(()=>document.getElementById('bootFill').style.width='100%',200);
+    setTimeout(()=>{boot.classList.add('hidden');login.classList.remove('hidden');},2600);
+
+    /* Clock */
+    const clock=document.getElementById('clock');function upd(){clock.textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}upd();setInterval(upd,6e4);
+
+    /* User interactions */
+    const guest=document.getElementById('guestCard');const admin=document.getElementById('adminCard');const pwdBox=document.getElementById('pwdBox');
+    guest.onclick=()=>$startSession();
+    admin.onclick=()=>{admin.classList.add('active');pwdBox.style.display='block';};
+    document.getElementById('pwdBtn').onclick=()=>{
+      if(document.getElementById('adminPwd').value==='password123')$startSession();else alert('Wrong password');};
+
+    async function $startSession(){login.classList.add('hidden');desktop.style.display='block';await document.documentElement.requestFullscreen?.();}
+
+    /* Dock apps */
+    const apps={
+      daggerfall:{title:'Daggerfall',url:'https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996'},
+      youtube:{title:'YouTube',url:'https://www.youtube.com'},
+      files:{title:'File Manager',url:'https://example.com'}
+    };
+    document.querySelectorAll('.dock-icon').forEach(ic=>ic.onclick=()=>openWin(apps[ic.dataset.app]));
+
+    function openWin(cfg){if(!cfg)return;const win=document.createElement('div');win.className='window';win.innerHTML=`<div class="w-header"><span class="w-btn close"></span><span class="w-btn min"></span><span class="w-btn max"></span><div class="w-title">${cfg.title}</div></div><div class="w-body"><iframe src="${cfg.url}"></iframe></div>`;document.body.appendChild(win);
+      const [cls,min,max]=win.querySelectorAll('.w-btn');cls.onclick=()=>win.remove();min.onclick=()=>win.style.display='none';max.onclick=()=>win.classList.toggle('fullscreen');
+      drag(win);
+    }
+    function drag(win){const hdr=win.querySelector('.w-header');hdr.onmousedown=e=>{const ox=e.clientX-win.offsetLeft,oy=e.clientY-win.offsetTop;const move=ev=>{win.style.left=ev.clientX-ox+'px';win.style.top=ev.clientY-oy+'px';};const up=()=>{document.removeEventListener('mousemove',move);};document.addEventListener('mousemove',move);document.addEventListener('mouseup',up,{once:1});};}
+  })();
   </script>
 </body>
 </html>
