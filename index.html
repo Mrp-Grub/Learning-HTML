@@ -25,9 +25,11 @@
 
     /* ========== Login Styles ========== */
     #login, #adminLogin {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      justify-content: flex-end; align-items: center;
+        position: absolute;
+        top: 38%; /* tweak this value as needed */
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
     }
     .userCard { position: absolute; text-align: center; }
     #guestCard { margin-bottom: 20px; }
