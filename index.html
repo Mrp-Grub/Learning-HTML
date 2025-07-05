@@ -16,9 +16,17 @@
 
     /* ========== Screen Base Styles ========== */
     .screen {
-     opacity: 0;
+      position: absolute;
+      inset: 0;
+      display: flex;               /* ADD THIS */
+      flex-direction: column;      /* ADD THIS */
+      align-items: center;         /* ADD THIS */
+      justify-content: center;     /* ADD THIS */
+      opacity: 0;
       pointer-events: none;
       transition: opacity 0.4s;
+    }
+
      }
     .screen.show {
       opacity: 1;
@@ -205,8 +213,11 @@
     setTimeout(() => {
       document.getElementById('bootFill').style.width = '100%';
       setTimeout(() => {
+        boot.classList.remove('show');
         boot.classList.add('hidden');
-        document.getElementById('login').classList.remove('hidden');
+        const login = document.getElementById('login');
+        login.classList.remove('hidden');
+        login.classList.add('show');
       }, 2000);
     }, 200);
 
@@ -217,15 +228,16 @@
       login.classList.add('hidden');
       login.classList.remove('show');
       desktopUI.style.display = 'flex';
-};
+    };
     function submitAdminLogin() {
       if (document.getElementById('adminPwd').value === 'password123') {
-      adminLogin.classList.add('hidden');
-      adminLogin.classList.remove('show');
-      desktopUI.style.display = 'flex';
+        adminLogin.classList.add('hidden');
+        adminLogin.classList.remove('show');
+        desktopUI.style.display = 'flex';
       } else {
-      alert('Wrong password');
-    };
+        alert('Wrong password');
+      }
+    }
     document.getElementById('pwdBtn').onclick = submitAdminLogin;
     };
 
