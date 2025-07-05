@@ -26,8 +26,6 @@
       pointer-events: none;
       transition: opacity 0.4s;
     }
-
-     }
     .screen.show {
       opacity: 1;
       pointer-events: all;
@@ -224,6 +222,7 @@
     document.documentElement.requestFullscreen?.().catch(() => {});
 
     // ——— Login logic ———
+    const login = document.getElementById('login');
     document.getElementById('guestCard').onclick = () => {
       login.classList.add('hidden');
       login.classList.remove('show');
