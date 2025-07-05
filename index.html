@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Phillips OS Demo</title>
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/12810/12810533.png"/>
-
-  <!-- js-dos runtime (optional) -->
   <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css" />
   <script src="https://v8.js-dos.com/latest/js-dos.js"></script>
-
   <style>
     * { margin:0; padding:0; box-sizing:border-box }
     html, body {
@@ -18,14 +15,12 @@
       font-family:-apple-system, BlinkMacSystemFont, sans-serif;
       color:#fff;
     }
-    /* Menubar */
     #menubar {
       position:absolute; top:0; left:0; right:0; height:22px;
       background:rgba(28,28,30,0.85); backdrop-filter:blur(10px);
       display:flex; align-items:center; padding:0 8px; font-size:12px; z-index:100;
     }
     .menu-spacer { flex:1 }
-    /* Dock */
     #dock {
       position:absolute; bottom:0; left:50%; transform:translateX(-50%);
       background:rgba(28,28,30,0.85); backdrop-filter:blur(10px);
@@ -36,15 +31,12 @@
       font-size:24px; line-height:32px; text-align:center;
       cursor:pointer; user-select:none;
     }
-
-    /* Window styles */
     .window {
-      position:absolute; width:400px; height:300px;
+      position:absolute; width:400px; height:320px;
       background:#2c2c2e; border:1px solid #3a3a3c; border-radius:6px;
       box-shadow:0 4px 16px rgba(0,0,0,0.5);
       display:flex; flex-direction:column; overflow:hidden; z-index:200;
     }
-    /* CSS maximize (fills under menubar and above dock) */
     .window[data-max="1"] {
       top:22px!important;
       left:0!important;
@@ -80,14 +72,12 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Clock
     const clockEl = document.getElementById('clock');
     function updateClock() {
       clockEl.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
     }
     updateClock(); setInterval(updateClock, 60000);
 
-    // Drag Helpers
     let topZ = 200;
     function startDrag(e, win) {
       const ox = e.clientX - win.offsetLeft;
@@ -105,7 +95,6 @@
       document.addEventListener('mouseup', onUp);
     }
 
-    // Window Factory
     let winCount = 0;
     function openWindow(title, contentHTML) {
       const win = document.createElement('div');
@@ -129,15 +118,10 @@
       btnMax.addEventListener('click', async () => {
         const willMax = win.dataset.max === '0';
         win.dataset.max = willMax ? '1' : '0';
-        if (willMax) {
-          // Request true fullscreen
-          if (win.requestFullscreen) {
-            try { await win.requestFullscreen({ navigationUI: 'hide' }); } catch {}
-          }
-        } else {
-          if (document.fullscreenElement) {
-            document.exitFullscreen().catch(() => {});
-          }
+        if (willMax && win.requestFullscreen) {
+          try { await win.requestFullscreen({ navigationUI: 'hide' }); } catch {}
+        } else if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
         }
       });
 
@@ -145,26 +129,58 @@
       return win;
     }
 
-    // Finder
     document.getElementById('finderIcon').addEventListener('click', () =>
       openWindow('Finder', '<h2>Finder</h2><p>Your files go here.</p>')
     );
 
-    // Browser
     document.getElementById('browserIcon').addEventListener('click', () => {
-      const vid = 'RSL6KqWKFvo', list = 'RDRSL6KqWKFvo';
-      const src = `https://www.youtube.com/embed/${vid}?list=${list}&autoplay=1`;
-      openWindow('Browser', `
-        <iframe src="${src}"
-                style="width:100%;height:100%;border:none"
-                frameborder="0"
-                allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen"
-                webkitallowfullscreen mozallowfullscreen allowfullscreen>
-        </iframe>
-      `);
+      const searchHTML = `
+        <input id="ytSearchInput" type="text" placeholder="Search YouTube..." 
+               style="width:100%;padding:8px;margin-bottom:8px;font-size:14px;" />
+        <button id="ytSearchBtn" style="padding:6px 12px;">Search</button>
+        <div id="ytVideoResult" style="margin-top:10px;"></div>
+      `;
+
+      const win = openWindow('YouTube Search', searchHTML);
+
+      setTimeout(() => {
+        const input = win.querySelector('#ytSearchInput');
+        const btn = win.querySelector('#ytSearchBtn');
+        const result = win.querySelector('#ytVideoResult');
+
+        const API_KEY = 'YOUR_API_KEY'; // Replace with your real YouTube API key
+
+        async function searchYouTube(query) {
+          result.innerHTML = "<p>Loading...</p>";
+          try {
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=${encodeURIComponent(query)}&key=${API_KEY}`);
+            const data = await res.json();
+            if (data.items && data.items.length > 0) {
+              const videoId = data.items[0].id.videoId;
+              result.innerHTML = `
+                <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1"
+                  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>`;
+            } else {
+              result.innerHTML = "<p>No results found.</p>";
+            }
+          } catch (err) {
+            result.innerHTML = "<p>Error loading video.</p>";
+            console.error(err);
+          }
+        }
+
+        btn.addEventListener('click', () => {
+          const query = input.value.trim();
+          if (query) searchYouTube(query);
+        });
+
+        input.addEventListener('keypress', e => {
+          if (e.key === 'Enter') btn.click();
+        });
+      }, 100);
     });
 
-    // Daggerfall
     document.getElementById('daggerIcon').addEventListener('click', () => {
       const isFirefox = /firefox/i.test(navigator.userAgent);
       const content = isFirefox
@@ -178,6 +194,13 @@
                   target="_blank" rel="noopener noreferrer">
              Open Daggerfall in a new tab</a></p>`;
       openWindow('Daggerfall', content);
+    });
+
+    // Optional: Ctrl+B shortcut to open browser
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 'b') {
+        document.getElementById('browserIcon').click();
+      }
     });
   });
   </script>
