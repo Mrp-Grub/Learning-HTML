@@ -199,13 +199,15 @@
     document.documentElement.requestFullscreen?.().catch(() => {});
 
     // ——— Login logic ———
-    const guestBtn = document.getElementById('guestBtn');
-    const adminBtn = document.getElementById('adminBtn');
+    //const guestBtn = document.getElementById('guestBtn');
+    //const adminBtn = document.getElementById('adminBtn');
+    <button id="guestBtn" class="loginBtn">Login as Guest</button>
+    <button id="adminBtn" class="loginBtn">Login as Admin</button>
     const adminPwdBox = document.getElementById('adminPwdBox');
-    guestBtn.onclick = () => startSession('Guest');
-    adminBtn.onclick = () => {
-      adminPwdBox.style.display = 'block';
-      document.getElementById('adminPwd').focus();
+    //guestBtn.onclick = () => startSession('Guest');
+    //adminBtn.onclick = () => {
+      //adminPwdBox.style.display = 'block';
+      //document.getElementById('adminPwd').focus();
     };
     document.getElementById('pwdBtn').onclick = () => {
       if (document.getElementById('adminPwd').value === 'password123') startSession('Admin');
