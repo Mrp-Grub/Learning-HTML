@@ -87,12 +87,18 @@
   </div>
 
   <script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      await document.documentElement.requestFullscreen?.();
-    } catch (e) {
-      console.warn('Fullscreen request failed:', e);
-    }
+  document.addEventListener('DOMContentLoaded', () => {
+    const forceFullscreen = async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (e) {
+        console.warn('Fullscreen request failed:', e);
+      }
+    };
+    forceFullscreen();
+    document.addEventListener('click', forceFullscreen, { once: true });
   });
 
   (function(){
