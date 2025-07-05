@@ -222,11 +222,13 @@
     const termInput = document.getElementById('termInput');
     let terminalOpen = false;
     window.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.shiftKey && e.key.toUpperCase() === 'Z' && !terminalOpen) {
-        e.preventDefault();
-        terminal.classList.remove('hidden');
-        terminalOpen = true;
-        termInput.value = ''; termInput.focus();
+      console.log(`Key: ${e.key}, Ctrl: ${e.ctrlKey}, Shift: ${e.shiftKey}`);
+        if (e.ctrlKey && e.shiftKey && e.key === 'Z' && !terminalOpen) {
+          e.preventDefault();
+          terminal.classList.remove('hidden');
+          terminalOpen = true;
+          termInput.value = '';
+          termInput.focus();
       }
     });
     termInput.addEventListener('keydown', e => {
