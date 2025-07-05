@@ -222,7 +222,7 @@
     const termInput = document.getElementById('termInput');
     let terminalOpen = false;
     window.addEventListener('keydown', e => {
-      if (e.shiftKey && e.key.toLowerCase() === 't' && !terminalOpen) {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 't' && !terminalOpen) {
         e.preventDefault();
         terminal.classList.remove('hidden');
         terminalOpen = true;
