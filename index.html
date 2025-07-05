@@ -199,15 +199,15 @@
     document.documentElement.requestFullscreen?.().catch(() => {});
 
     // ——— Login logic ———
-    //const guestBtn = document.getElementById('guestBtn');
-    //const adminBtn = document.getElementById('adminBtn');
-    <button id="guestBtn" class="loginBtn">Login as Guest</button>
-    <button id="adminBtn" class="loginBtn">Login as Admin</button>
+      document.getElementById('guestCard').onclick = () => startSession('Guest');
+    document.getElementById('adminLoginCard').onclick = () => {
+      document.getElementById('login').classList.add('hidden');
+      document.getElementById('adminLogin').classList.remove('hidden');
+      adminPwdBox.style.display = 'block';
+      document.getElementById('adminPwd').focus();
+    };
+    document.getElementById('pwdBtn').onclick = () => {
     const adminPwdBox = document.getElementById('adminPwdBox');
-    //guestBtn.onclick = () => startSession('Guest');
-    //adminBtn.onclick = () => {
-      //adminPwdBox.style.display = 'block';
-      //document.getElementById('adminPwd').focus();
     };
     document.getElementById('pwdBtn').onclick = () => {
       if (document.getElementById('adminPwd').value === 'password123') startSession('Admin');
@@ -234,16 +234,21 @@
       }
     });
     termInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        if (termInput.value.trim().toLowerCase() === 'sudo admin login') {
-          terminal.classList.add('hidden'); terminalOpen = false;
-          document.getElementById('login').classList.add('hidden');
-          document.getElementById('adminLogin').classList.remove('hidden');
-          adminPwdBox.style.display = 'block';
-          document.getElementById('adminPwd').focus();
-        } else {
-          alert('Unknown command');
-        }
+  if (e.key === 'Enter') {
+    const input = termInput.value.trim().toLowerCase();
+    if (input === 'sudo admin login') {
+      terminal.classList.add('hidden');
+      terminalOpen = false;
+      document.getElementById('login').classList.add('hidden');
+      document.getElementById('adminLogin').classList.remove('hidden');
+      adminPwdBox.style.display = 'block';
+      document.getElementById('adminPwd').focus();
+    } else if (input === 'exit') {
+      terminal.classList.add('hidden');
+      terminalOpen = false;
+    } else {
+      alert('Unknown command');
+    }
         termInput.value = '';
       }
     });
