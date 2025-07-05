@@ -5,283 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phillips OS — Boot + Login</title>
   <style>
-    :root { --green: #27c93f; --blue: #0078D7; --backdrop: rgba(0,0,0,0.3); }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%; height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #000; color: #fff; overflow: hidden;
-    }
-
-    .screen {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.4s;
-    }
-    .screen.show {
-      opacity: 1; pointer-events: all;
-    }
-    .hidden { opacity: 0; pointer-events: none; }
-
-    #bootLogo { width: 100px; height: 100px; background: url(https://cdn-icons-png.flaticon.com/512/5977/5977575.png) center/contain no-repeat; margin-bottom: 20px; }
-    #bootBar { width: 180px; height: 8px; background: #333; border-radius: 6px; overflow: hidden; }
-    #bootFill { width: 0; height: 100%; background: var(--green); transition: width 2s linear; }
-
-    #login, #adminLogin {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-    .userCard img {
-      width: 110px; height: 110px; border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0,0,0,.6);
-    }
-    .userLabel { margin-top: 8px; font-size: 14px; }
-
-    #adminPwdBox {
-      margin-top: 20px; display: none; text-align: center;
-    }
-    #adminPwdBox input {
-      padding: 6px 10px; border-radius: 6px;
-      border: none; background: #222; color: #fff;
-      width: 140px;
-    }
-
-    #terminal {
-      position: absolute; inset: 0;
-      background: #000c; display: flex;
-      flex-direction: column; align-items: center;
-      justify-content: center; gap: 12px;
-      font-family: monospace;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    #terminal.show {
-      opacity: 1; pointer-events: all;
-    }
-    #termInput {
-      width: 60%; max-width: 320px;
-      padding: 6px 10px; border: none;
-      border-radius: 4px; background: #111;
-      color: #0f0;
-    }
-
-    #desktopUI, #adminDesktop {
-      display: none; width: 100%; height: 100%;
-      position: relative;
-      background: #1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat;
-    }
-    .menubar {
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 22px; background: var(--backdrop);
-      backdrop-filter: blur(10px);
-      display: flex; align-items: center;
-      padding: 0 8px; font-size: 12px; z-index: 10;
-    }
-    .menubar > div { margin-right: 12px; }
-    .clock { margin-left: auto; font-weight: bold; }
-
-    .dock {
-      position: absolute; bottom: 16px;
-      left: 50%; transform: translateX(-50%);
-      display: flex; padding: 4px 10px;
-      border-radius: 18px; background: var(--backdrop);
-      backdrop-filter: blur(10px); z-index: 10;
-    }
-    .dock-icon {
-      width: 40px; height: 40px; margin: 0 6px;
-      border-radius: 10px; cursor: pointer;
-      transition: transform .15s;
-    }
-    .dock-icon:hover {
-      transform: scale(1.12);
-      background: rgba(255,255,255,.12);
-    }
-    .dock-icon img {
-      width: 100%; height: 100%; object-fit: contain;
-      pointer-events: none;
-    }
-
-    .window {
-      position: absolute; top: 80px; left: 120px;
-      width: 800px; height: 600px;
-      background: #2c2c2e; border-radius: 12px;
-      box-shadow: 0 6px 24px rgba(0,0,0,.5);
-      display: flex; flex-direction: column; z-index: 100;
-    }
-    .w-header {
-      display: flex; align-items: center;
-      height: 24px; padding: 0 8px;
-      background: #3a3a3c; cursor: move; gap: 6px;
-    }
-    .w-btn { width: 12px; height: 12px; border-radius: 50%; }
-    .close { background: #FF5F56; }
-    .min   { background: #FFBD2E; }
-    .max   { background: #27C93F; }
-    .w-title { flex: 1; text-align: center; font-size: 12px; }
-    .w-body { flex: 1; }
-    .w-body iframe { width: 100%; height: 100%; border: none; }
+    :root { --green:#27c93f; --blue:#0078D7; --backdrop:rgba(0,0,0,.3);}*{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;height:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#000;color:#fff;overflow:hidden}
+    .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+    .screen.show{opacity:1;pointer-events:all}
+    #bootLogo{width:100px;height:100px;background:url(https://cdn-icons-png.flaticon.com/512/5977/5977575.png) center/contain no-repeat;margin-bottom:20px}
+    #bootBar{width:180px;height:8px;background:#333;border-radius:6px;overflow:hidden}
+    #bootFill{width:0;height:100%;background:var(--green);transition:width 2s linear}
+    #login,#adminLogin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+    .userCard img{width:110px;height:110px;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.6)}
+    .userLabel{margin-top:8px;font-size:14px}
+    #adminPwdBox{margin-top:20px;display:none;text-align:center}
+    #adminPwdBox input{padding:6px 10px;border-radius:6px;border:none;background:#222;color:#fff;width:140px}
+    #terminal{position:absolute;inset:0;background:#000c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:monospace;opacity:0;pointer-events:none;transition:opacity .3s}
+    #terminal.show{opacity:1;pointer-events:all}
+    #termInput{width:60%;max-width:320px;padding:6px 10px;border:none;border-radius:4px;background:#111;color:#0f0}
+    #desktopUI,#adminDesktop{display:none;width:100%;height:100%;position:relative;background:#1e1e1e url('https://www.omgubuntu.co.uk/wp-content/uploads/2016/10/GOUKlfP.jpg') center/cover no-repeat}
+    .menubar{position:absolute;top:0;left:0;right:0;height:22px;background:var(--backdrop);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 8px;font-size:12px;z-index:10}
+    .menubar>div{margin-right:12px}.clock{margin-left:auto;font-weight:bold}
+    .dock{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;padding:4px 10px;border-radius:18px;background:var(--backdrop);backdrop-filter:blur(10px);z-index:10}
+    .dock-icon{width:40px;height:40px;margin:0 6px;border-radius:10px;cursor:pointer;transition:transform .15s}
+    .dock-icon:hover{transform:scale(1.12);background:rgba(255,255,255,.12)}.dock-icon img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+    .window{position:absolute;top:80px;left:120px;width:800px;height:600px;background:#2c2c2e;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.5);display:flex;flex-direction:column;z-index:100}
+    .w-header{display:flex;align-items:center;height:24px;padding:0 8px;background:#3a3a3c;cursor:move;gap:6px}.w-btn{width:12px;height:12px;border-radius:50%}.close{background:#FF5F56}.min{background:#FFBD2E}.max{background:#27C93F}.w-title{flex:1;text-align:center;font-size:12px}.w-body{flex:1}.w-body iframe{width:100%;height:100%;border:none}
   </style>
 </head>
 <body>
-  <section id="boot" class="screen show">
-    <div id="bootLogo"></div>
-    <div id="bootBar"><div id="bootFill"></div></div>
-  </section>
-
-  <section id="login" class="screen hidden">
-    <div id="guestCard" class="userCard">
-      <img src="https://i.imgur.com/UPVxPjb.png" alt="Guest">
-      <div class="userLabel">Guest</div>
-    </div>
-  </section>
-
-  <section id="adminLogin" class="screen hidden">
-    <div id="adminLoginCard" class="userCard">
-      <img src="https://i.imgur.com/8Km9tLL.jpg" alt="Admin">
-      <div class="userLabel">Admin</div>
-      <div id="adminPwdBox">
-        <input id="adminPwd" type="password" placeholder="Password">
-      </div>
-    </div>
-  </section>
-
-  <section id="terminal" class="screen">
-    <div>Terminal</div>
-    <input id="termInput" autocomplete="off" spellcheck="false">
-  </section>
-
-  <section id="desktopUI">
-    <div class="menubar">
-      <div><img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" style="height:16px" alt="Logo"></div>
-      <div>File</div><div>Edit</div><div>View</div><div class="clock"></div>
-    </div>
-    <div class="dock"></div>
-  </section>
-
-  <section id="adminDesktop">
-    <div class="menubar">
-      <div><img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" style="height:16px" alt="Logo"></div>
-      <div>Admin</div><div>Tools</div><div>Settings</div><div class="clock"></div>
-    </div>
-    <div class="dock"></div>
-  </section>
-
-  <script>
-    const boot = document.getElementById('boot');
-    const login = document.getElementById('login');
-    const adminLogin = document.getElementById('adminLogin');
-    const adminPwdBox = document.getElementById('adminPwdBox');
-    const desktopUI = document.getElementById('desktopUI');
-    const adminDesktop = document.getElementById('adminDesktop');
-
-    setTimeout(() => {
-      document.getElementById('bootFill').style.width = '100%';
-      setTimeout(() => {
-        boot.classList.remove('show');
-        login.classList.add('show');
-      }, 2000);
-    }, 200);
-
-    document.getElementById('guestCard').onclick = () => {
-      login.classList.remove('show');
-      desktopUI.style.display = 'block';
-    };
-
-    document.getElementById('adminPwd').addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        if (e.target.value === 'password123') {
-          adminLogin.classList.remove('show');
-          adminDesktop.style.display = 'block';
-        } else {
-          alert('Wrong password');
-        }
-      }
-    });
-
-    const terminal = document.getElementById('terminal');
-    const termInput = document.getElementById('termInput');
-
-    window.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        terminal.classList.add('show');
-        termInput.value = '';
-        termInput.focus();
-      }
-    });
-
-    termInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        const input = termInput.value.trim().toLowerCase();
-        if (input === 'sudo admin login') {
-          terminal.classList.remove('show');
-          login.classList.remove('show');
-          adminLogin.classList.add('show');
-          adminPwdBox.style.display = 'block';
-          document.getElementById('adminPwd').focus();
-        } else if (input === 'exit') {
-          terminal.classList.remove('show');
-        } else {
-          alert('Unknown command');
-        }
-        termInput.value = '';
-      }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const clocks = document.querySelectorAll('.clock');
-      const updateClock = () => clocks.forEach(el => el.textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}));
-      updateClock(); setInterval(updateClock, 60000);
-
-      const apps = {
-        daggerfall: {title:'Daggerfall', url:'https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996', icon:'https://cdn-icons-png.flaticon.com/512/181/181549.png'},
-        youtube:    {title:'YouTube',    url:'https://www.youtube.com', icon:'https://cdn-icons-png.flaticon.com/512/1384/1384060.png'},
-        files:      {title:'File Manager', url:'https://example.com', icon:'https://cdn-icons-png.flaticon.com/512/148/148933.png'}
-      };
-
-      document.querySelectorAll('.dock').forEach(dock => {
-        Object.keys(apps).forEach(app => {
-          const cfg = apps[app];
-          const icon = document.createElement('div');
-          icon.className = 'dock-icon';
-          icon.innerHTML = `<img src="${cfg.icon}">`;
-          icon.onclick = () => {
-            const win = document.createElement('div');
-            win.className = 'window';
-            win.innerHTML = `
-              <div class="w-header">
-                <span class="w-btn close"></span>
-                <span class="w-btn min"></span>
-                <span class="w-btn max"></span>
-                <div class="w-title">${cfg.title}</div>
-              </div>
-              <div class="w-body"><iframe src="${cfg.url}"></iframe></div>
-            `;
-            document.body.appendChild(win);
-            const [cls, min, max] = win.querySelectorAll('.w-btn');
-            cls.onclick = () => win.remove();
-            min.onclick = () => win.style.display = 'none';
-            max.onclick = () => win.classList.toggle('fullscreen');
-            const hdr = win.querySelector('.w-header');
-            hdr.onmousedown = e => {
-              const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
-              const move = ev => {
-                win.style.left = ev.clientX - ox + 'px';
-                win.style.top = ev.clientY - oy + 'px';
-              };
-              const up = () => document.removeEventListener('mousemove', move);
-              document.addEventListener('mousemove', move);
-              document.addEventListener('mouseup', up, {once:true});
-            };
-          };
-          dock.appendChild(icon);
-        });
-      });
-    });
-  </script>
+  <!-- Boot Screen -->
+  <section id="boot" class="screen show"><div id="bootLogo"></div><div id="bootBar"><div id="bootFill"></div></div></section>
+  <!-- Guest Login -->
+  <section id="login" class="screen hidden"><div id="guestCard" class="userCard"><img src="https://i.imgur.com/UPVxPjb.png" alt="Guest"><div class="userLabel">Guest</div></div></section>
+  <!-- Admin Login -->
+  <section id="adminLogin" class="screen hidden"><div id="adminLoginCard" class="userCard"><img src="https://i.imgur.com/8Km9tLL.jpg" alt="Admin"><div class="userLabel">Admin</div><div id="adminPwdBox"><input id="adminPwd" type="password" placeholder="Password"></div></div></section>
+  <!-- Terminal -->
+  <section id="terminal" class="screen"><div>Terminal</div><input id="termInput" autocomplete="off" spellcheck="false"></section>
+  <!-- Guest Desktop -->
+  <section id="desktopUI"><div class="menubar"><div><img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" style="height:16px" alt="Logo"></div><div>File</div><div>Edit</div><div>View</div><div class="clock"></div></div><div class="dock"></div></section>
+  <!-- Admin Desktop -->
+  <section id="adminDesktop"><div class="menubar"><div><img src="https://cdn-icons-png.flaticon.com/512/5977/5977575.png" style="height:16px" alt="Logo"></div><div>Admin</div><div>Tools</div><div>Settings</div><div class="clock"></div></div><div class="dock"></div></section>
+<script>
+/********** Utility to obfuscate the admin password **********/
+const _codes=[21*5, 485-388, 218-109, 58*2, 13*8, 202-101, 49*2, 37*3, 230-115, 345/3];
+const SECRET=_codes.map(c=>String.fromCharCode(c)).join(''); 
+/*************************************************************/
+const boot=document.getElementById('boot'),login=document.getElementById('login'),adminLogin=document.getElementById('adminLogin'),adminPwdBox=document.getElementById('adminPwdBox'),desktopUI=document.getElementById('desktopUI'),adminDesktop=document.getElementById('adminDesktop');
+setTimeout(()=>{document.getElementById('bootFill').style.width='100%';setTimeout(()=>{boot.classList.remove('show');login.classList.add('show');},2000);},200);
+document.getElementById('guestCard').onclick=()=>{login.classList.remove('show');desktopUI.style.display='block';};
+document.getElementById('adminPwd').addEventListener('keydown',e=>{if(e.key==='Enter'){if(e.target.value===SECRET){adminLogin.classList.remove('show');adminDesktop.style.display='block';}else alert('Wrong password');}});
+const terminal=document.getElementById('terminal'),termInput=document.getElementById('termInput');
+window.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='z'){e.preventDefault();terminal.classList.add('show');termInput.value='';termInput.focus();}});
+termInput.addEventListener('keydown',e=>{if(e.key==='Enter'){const input=termInput.value.trim().toLowerCase();if(input==='sudo admin login'){terminal.classList.remove('show');login.classList.remove('show');adminLogin.classList.add('show');adminPwdBox.style.display='block';document.getElementById('adminPwd').focus();}else if(input==='exit'){terminal.classList.remove('show');}else alert('Unknown command');termInput.value='';}});
+document.addEventListener('DOMContentLoaded',()=>{const clocks=document.querySelectorAll('.clock');const updateClock=()=>clocks.forEach(el=>el.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));updateClock();setInterval(updateClock,60000);
+const apps={daggerfall:{title:'Daggerfall',url:'https://archive.org/embed/msdos_Elder_Scrolls_The_-_Daggerfall_1996',icon:'https://cdn-icons-png.flaticon.com/512/181/181549.png'},youtube:{title:'YouTube',url:'https://www.youtube.com',icon:'https://cdn-icons-png.flaticon.com/512/1384/1384060.png'},files:{title:'File Manager',url:'https://example.com',icon:'https://cdn-icons-png.flaticon.com/512/148/148933.png'}};
+document.querySelectorAll('.dock').forEach(dock=>{Object.keys(apps).forEach(key=>{const cfg=apps[key];const icon=document.createElement('div');icon.className='dock-icon';icon.innerHTML=`<img src="${cfg.icon}">`;icon.onclick=()=>{const win=document.createElement('div');win.className='window';win.innerHTML=`<div class='w-header'><span class='w-btn close'></span><span class='w-btn min'></span><span class='w-btn max'></span><div class='w-title'>${cfg.title}</div></div><div class='w-body'><iframe src='${cfg.url}'></iframe></div>`;document.body.appendChild(win);const[cls,min,max]=win.querySelectorAll('.w-btn');cls.onclick=()=>win.remove();min.onclick=()=>win.style.display='none';max.onclick=()=>win.classList.toggle('fullscreen');const hdr=win.querySelector('.w-header');hdr.onmousedown=evt=>{const ox=evt.clientX-win.offsetLeft,oy=evt.clientY-win.offsetTop;const move=ev=>{win.style.left=ev.clientX-ox+'px';win.style.top=ev.clientY-oy+'px';};const up=()=>document.removeEventListener('mousemove',move);document.addEventListener('mousemove',move);document.addEventListener('mouseup',up,{once:true});};};dock.appendChild(icon);});});});
+</script>
 </body>
 </html>
