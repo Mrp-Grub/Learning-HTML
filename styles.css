@@ -1,0 +1,236 @@
+/* ========== GLOBAL STYLES ========== */
+:root { --green:#27c93f; --blue:#0078D7; --backdrop:rgba(0,0,0,.3);}
+* { margin:0; padding:0; box-sizing:border-box }
+
+html, body {
+  width:100%; height:100%;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#000; color:#fff;
+  overflow:hidden;
+}
+
+/* ========== SCREEN WRAPPER ========== */
+.screen {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .4s
+}
+.screen.show {
+  opacity:1; pointer-events:all
+}
+
+/* ========== BOOT SCREEN STYLES ========== */
+#bootLogo {
+  width:100px; height:100px;
+  background:url(https://cdn-icons-png.flaticon.com/512/1229/1229063.png) center/contain no-repeat;
+  margin-bottom:20px
+}
+#bootBar {
+  width:180px; height:8px;
+  background:#333;
+  border-radius:6px;
+  overflow:hidden
+}
+#bootFill {
+  width:0; height:100%;
+  background:var(--green);
+  transition:width 2s linear
+}
+
+/* ========== LOGIN SCREEN STYLES ========== */
+#login, #adminLogin {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center
+}
+.userCard img {
+  width:110px; height:110px;
+  border-radius:50%;
+  box-shadow:0 4px 12px rgba(0,0,0,.6)
+}
+.userLabel {
+  margin-top:8px; font-size:14px
+}
+#adminPwdBox {
+  margin-top:20px;
+  display:none;
+  text-align:center
+}
+#adminPwdBox input {
+  padding:6px 10px;
+  border-radius:6px;
+  border:none;
+  background:#222;
+  color:#fff;
+  width:140px
+}
+
+/* ========== TERMINAL STYLES ========== */
+#terminal {
+  position:absolute; inset:0;
+  background:#000c;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  font-family:monospace;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s
+}
+#terminal.show {
+  opacity:1; pointer-events:all
+}
+#termInput {
+  width:60%; max-width:320px;
+  padding:6px 10px;
+  border:none; border-radius:4px;
+  background:#111; color:#0f0
+}
+
+/* ========== DESKTOP STYLES ========== */
+#desktopUI, #adminDesktop {
+  display:none;
+  width:100%; height:100%;
+  position:relative;
+  background:#1e1e1e url('https://image-3.uhdpaper.com/wallpaper/japanese-garden-colorful-scenery-digital-art-hd-wallpaper-uhdpaper.com-702@3@a.jpg') center/cover no-repeat
+}
+
+.menubar {
+  position:absolute; top:0; left:0; right:0;
+  height:22px;
+  background:var(--backdrop);
+  backdrop-filter:blur(10px);
+  display:flex;
+  align-items:center;
+  padding:0 8px;
+  font-size:12px;
+  z-index:10
+}
+.menubar>div {
+  margin-right:12px
+}
+.clock {
+  margin-left:auto;
+  font-weight:bold
+}
+
+.dock {
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  padding:4px 10px;
+  border-radius:18px;
+  background:var(--backdrop);
+  backdrop-filter:blur(10px);
+  z-index:10
+}
+
+.dock-icon {
+  width:40px; height:40px;
+  margin:0 6px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:transform .15s
+}
+.dock-icon:hover {
+  transform:scale(1.12);
+  background:rgba(255,255,255,.12)
+}
+.dock-icon img {
+  width:100%; height:100%;
+  object-fit:contain;
+  pointer-events:none
+}
+
+.window {
+  position:absolute;
+  top:80px; left:120px;
+  width:800px; height:600px;
+  background:#2c2c2e;
+  border-radius:16px 16px 0 0; /* Less rounded top corners */
+  box-shadow:0 6px 24px rgba(0,0,0,.5);
+  display:flex;
+  flex-direction:column;
+  z-index:100;
+  user-select: none;
+}
+.w-header {
+  display:flex;
+  align-items:center;
+  height:24px;
+  padding:0 8px;
+  background:#3a3a3c;
+  cursor:default;
+  gap:6px;
+  border-top-left-radius:16px;
+  border-top-right-radius:16px;
+  user-select: none;
+}
+
+/* Fullscreen window style */
+.window.fullscreen {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+.w-btn { width:12px; height:12px; border-radius:50% }
+.close { background:#FF5F56 }
+.min { background:#FFBD2E }
+.max { background:#27C93F }
+.w-title { flex:1; text-align:center; font-size:12px }
+.w-body {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.w-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* Daggerfall window: center and scale the iframe using flex */
+
+
+
+.window .w-body.daggerfall-flex {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  background: #000;
+  overflow: hidden;
+}
+.window .w-body.daggerfall-flex iframe {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: fill !important;
+  border: none !important;
+  background: #000 !important;
+  box-shadow: none !important;
+  display: block !important;
+}
