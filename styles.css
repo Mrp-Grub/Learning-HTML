@@ -208,29 +208,3 @@ html, body {
   padding: 0;
   box-sizing: border-box;
 }
-
-
-/* Daggerfall window: center and scale the iframe using flex */
-
-
-
-.window .w-body.daggerfall-flex {
-  display: flex !important;
-  align-items: stretch !important;
-  justify-content: stretch !important;
-  background: #000;
-  overflow: hidden;
-}
-.window .w-body.daggerfall-flex iframe {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  object-fit: fill !important;
-  border: none !important;
-  background: #000 !important;
-  box-shadow: none !important;
-  display: block !important;
-}
