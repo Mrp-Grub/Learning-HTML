@@ -1,6 +1,6 @@
 
-[Boot Logo](https://cdn-icons-png.flaticon.com/512/1229/1229063.png)
-# Phillips OS
+![Boot Logo](https://cdn-icons-png.flaticon.com/512/1229/1229063.png)
+### Phillips OS
 
 ![Phillips OS Banner](https://cdn-icons-png.flaticon.com/128/3242/3242257.png)
 
