@@ -1,6 +1,8 @@
 
-![Boot Logo](https://cdn-icons-png.flaticon.com/512/1229/1229063.png)
-<h1 style="font-size: 48px; text-align: center;">Phillips OS</h1>
+<h1 style="font-size: 48px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px;">
+  <img src="https://cdn-icons-png.flaticon.com/512/1229/1229063.png" alt="Boot Logo" width="48" />
+  Phillips OS
+</h1>
 
 ![Phillips OS Banner](https://cdn-icons-png.flaticon.com/128/3242/3242257.png)
 
