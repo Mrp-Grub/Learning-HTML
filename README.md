@@ -1,5 +1,5 @@
 <h1 style="font-size: 48px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px;">
-  <img src="https://cdn-icons-png.flaticon.com/512/1229/1229063.png" alt="Boot Logo" width="96" />
+  <img src="https://cdn-icons-png.flaticon.com/512/1229/1229063.png" alt="Boot Logo" width="128" />
   Phillips OS
 </h1>
 
